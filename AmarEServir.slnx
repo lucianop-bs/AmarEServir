@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/Api/">
+    <Project Path="backend/Auth.API/Auth.API.csproj" />
+  </Folder>
+  <Folder Name="/Core/">
+    <Project Path="backend/Core/AmarEServir.Core.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+  </Folder>
+</Solution>

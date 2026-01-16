@@ -1,0 +1,26 @@
+# Remova a linha abaixo se quiser herdar as configurações do .editorconfig de diretórios superiores
+root = true
+
+# Aplicar a todos os arquivos
+[*]
+trim_trailing_whitespace = true:warning
+insert_final_newline = true:warning
+end_of_line = crlf
+
+# Arquivos C#
+[*.cs]
+
+#### Opções Principais do EditorConfig ####
+indent_size = 4
+indent_style = space
+tab_width = 4
+
+#### Convenções de codificação .NET ####
+
+# Regra de OURO: Impede múltiplas linhas em branco seguidas
+dotnet_style_allow_multiple_blank_lines_experimental = false:warning
+csharp_style_allow_blank_lines_between_consecutive_braces_experimental = false:warning
+
+# Outras preferências de nova linha
+csharp_style_allow_blank_line_after_colon_in_constructor_initializer_experimental = false:warning
+csharp_style_allow_blank_line_after_token_in_arrow_expression_clause_experimental = false:warning
