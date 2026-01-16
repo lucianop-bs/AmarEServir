@@ -1,4 +1,5 @@
-﻿using AmarEServir.Core.Middlewares;
+﻿using AmarEServir.Core.Filters;
+using AmarEServir.Core.Middlewares;
 using Microsoft.AspNetCore.Mvc;
 using Scalar.AspNetCore;
 
@@ -71,9 +72,7 @@ namespace Auth.API.Api.Configurations
             app.UseHttpsRedirection();
             app.UseCors("Total");
             app.UseAuthorization();
-
             app.MapControllers();
-
             await app.RunAsync();
         }
     }

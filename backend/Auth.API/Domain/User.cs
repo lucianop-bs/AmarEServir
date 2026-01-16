@@ -11,8 +11,7 @@ namespace Auth.API.Domain
         public string Phone { get; private set; }
         public string Password { get; private set; }
         public Address Address { get; private set; }
-        public Guid? CellId { get; private set; }
-        public string? CellName { get; private set; }
+
         public UserRole Role { get; private set; }
         public User() { }
 
@@ -33,8 +32,6 @@ namespace Auth.API.Domain
             Phone = phone;
             Password = password;
             Address = address;
-            CellId = celulaId;
-            CellName = cellName;
             Role = role;
         }
 
@@ -54,12 +51,6 @@ namespace Auth.API.Domain
 
             if (!Enum.IsDefined(Role))
                 return Result.Fail(UserError.TypeInvalid);
-            if (Role == UserRole.Leader && string.IsNullOrWhiteSpace(CellName) && CellId == Guid.Empty)
-                return Result.Fail(UserError.RoleRequired);
-
-            if ((Role != UserRole.Leader) && !string.IsNullOrWhiteSpace(CellName))
-                return Result.Fail(UserError.InvalidForRole);
-
             var addressValidation = Address.Validate();
 
             if (!addressValidation.IsSuccess)
