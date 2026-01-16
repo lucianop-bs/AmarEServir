@@ -37,23 +37,16 @@ namespace Auth.API.Domain
         public Result Validate()
         {
             var resultValidation = ResultValidation.ValidateCollectErrors(
-                () => string.IsNullOrWhiteSpace(Name)
-                ? Result.Fail(UserError.NameRequired)
-                : Result.Ok(),
-                () => Name.Length < 3 || Name.Length > 50
-                ? Result.Fail(UserError.NameLength)
+                () => string.IsNullOrWhiteSpace(Name) || Name.Length < 3 || Name.Length > 50
+                ? Result.Fail(string.IsNullOrWhiteSpace(Name) ? UserError.NameRequired : UserError.NameLength)
                 : Result.Ok(),
 
                 () => string.IsNullOrWhiteSpace(Email) || !Email.Contains('@')
                 ? Result.Fail(UserError.InvalidEmail)
                 : Result.Ok(),
 
-                () => string.IsNullOrWhiteSpace(Phone)
-               ? Result.Fail(UserError.PhoneRequired)
-               : Result.Ok(),
-
-                () => Phone.Length > 13 || Phone.Length < 11
-               ? Result.Fail(UserError.PhoneInvalid)
+                () => string.IsNullOrWhiteSpace(Phone) || Phone.Length > 13 || Phone.Length < 11
+               ? Result.Fail(string.IsNullOrWhiteSpace(Phone) ? UserError.PhoneRequired : UserError.PhoneInvalid)
                : Result.Ok(),
 
                  () => string.IsNullOrWhiteSpace(Password) || Password.Length <= 6
