@@ -33,7 +33,7 @@ namespace Auth.API.Domain
         public static Error CidadeRequired => new("Address.Cidade", "A cidade é obrigatória.", ErrorType.Validation);
 
         public static Error NumeroLimit => new("Address.Lote", "O lote deve conter no máximo 20 caracteres.", ErrorType.Validation);
-        public static Error NumeroRequired => new("Address.Numero", "O numero deve ser preenchido", ErrorType.Validation);
+        public static Error NumeroRequired => new("Address.Numero", "O número deve ser preenchido", ErrorType.Validation);
 
         public static Error QuadraLimit => new("Address.Quadra", "A quadra deve conter no máximo 20 caracteres.", ErrorType.Validation);
 
