@@ -49,7 +49,7 @@ namespace Auth.API.Domain
                ? Result.Fail(UserError.PhoneInvalid)
                : Result.Ok(),
 
-                 () => string.IsNullOrWhiteSpace(Password) || Phone.Length > 6
+                 () => string.IsNullOrWhiteSpace(Password) || Password.Length <= 6
                ? Result.Fail(UserError.WeakPassword)
                : Result.Ok(),
 
@@ -58,6 +58,7 @@ namespace Auth.API.Domain
                : Result.Ok()
                );
 
+            Address.Validate();
             if (!resultValidation.IsSuccess)
                 return Result.Fail(resultValidation.Errors);
 
