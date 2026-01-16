@@ -43,7 +43,7 @@ namespace Auth.API.Domain
                   () => Name.Length < 3 || Name.Length > 50
                 ? Result.Fail(UserError.NameLength)
                 : Result.Ok(),
-            
+
                 () => string.IsNullOrWhiteSpace(Email) || !Email.Contains('@')
                 ? Result.Fail(UserError.InvalidEmail)
                 : Result.Ok(),
@@ -69,8 +69,8 @@ namespace Auth.API.Domain
                : Address.Validate()
                );
 
-         
             if (!resultValidation.IsSuccess)
+
                 return Result.Fail(resultValidation.Errors);
 
             return Result.Ok();
