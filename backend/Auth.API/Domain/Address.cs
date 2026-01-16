@@ -21,15 +21,23 @@ public record class Address(
             ? Result.Fail(UserError.CepRequired)
             : Result.Ok(),
 
+            () => !string.IsNullOrWhiteSpace(Cep) && Cep.Length != 8
+            ? Result.Fail(UserError.CepFormat)
+            : Result.Ok(),
+
             () => string.IsNullOrWhiteSpace(Estado) || Estado.Length != 2
             ? Result.Fail(UserError.EstadoInvalid)
             : Result.Ok(),
 
-            () => string.IsNullOrWhiteSpace(Rua)
+            () => string.IsNullOrWhiteSpace(Rua) || Rua.Length > 100 || Rua.Length < 2
             ? Result.Fail(UserError.RuaInvalid)
             : Result.Ok(),
 
             () => string.IsNullOrWhiteSpace(Numero)
+            ? Result.Fail(UserError.NumeroRequired)
+            : Result.Ok(),
+
+            () => Numero.Length > 20
             ? Result.Fail(UserError.NumeroLimit)
             : Result.Ok(),
 
@@ -37,10 +45,11 @@ public record class Address(
             ? Result.Fail(UserError.BairroRequired)
             : Result.Ok(),
 
-            () => string.IsNullOrWhiteSpace(Cidade)
-            ? Result.Fail(UserError.CidadeRequired)
+            () => string.IsNullOrWhiteSpace(Cidade) || Cidade.Length > 100 || Cidade.Length < 2
+            ? Result.Fail(UserError.CidadeInvalid)
             : Result.Ok()
             );
+
         if (!resultValidation.IsSuccess)
             return Result.Fail(resultValidation.Errors);
 
