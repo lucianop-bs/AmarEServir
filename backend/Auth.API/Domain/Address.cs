@@ -19,9 +19,7 @@ public record class Address(
         var resultValidation = ResultValidation.ValidateCollectErrors(
             () => string.IsNullOrWhiteSpace(Cep)
             ? Result.Fail(UserError.CepRequired)
-            : Result.Ok(),
-
-            () => Cep.Length != 8
+            : (Cep.Length != 8)
             ? Result.Fail(UserError.CepFormat)
             : Result.Ok(),
 
@@ -35,17 +33,13 @@ public record class Address(
 
             () => string.IsNullOrWhiteSpace(Numero)
             ? Result.Fail(UserError.NumeroRequired)
-            : Result.Ok(),
-
-            () => Numero.Length > 20
+            : (Numero.Length > 20)
             ? Result.Fail(UserError.NumeroLimit)
             : Result.Ok(),
 
             () => string.IsNullOrWhiteSpace(Bairro)
             ? Result.Fail(UserError.BairroRequired)
-            : Result.Ok(),
-
-            () => Bairro.Length >= 200 || Bairro.Length < 2
+            : (Bairro.Length >= 200 || Bairro.Length < 2)
             ? Result.Fail(UserError.BairroInvalid)
             : Result.Ok(),
 
