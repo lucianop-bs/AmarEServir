@@ -25,7 +25,7 @@ namespace Auth.API.Domain
         public static Error EstadoInvalid => new("Address.Estado", "O estado deve conter 2 caracteres.", ErrorType.Validation);
 
         public static Error RuaInvalid => new("Address.Rua", "A rua deve conter no máximo 100 caracteres.", ErrorType.Validation);
-        public static Error CidadeInvalid => new("Address.Cidade", "A rua deve conter no máximo 100 caracteres.", ErrorType.Validation);
+        public static Error CidadeInvalid => new("Address.Cidade", "A cidade deve conter no máximo 100 caracteres.", ErrorType.Validation);
         public static Error BairroInvalid => new("Address.Bairro", "O bairro deve conter no máximo 100 caracteres.", ErrorType.Validation);
 
         public static Error BairroRequired => new("Address.Bairro", "O bairro é obrigatório.", ErrorType.Validation);
