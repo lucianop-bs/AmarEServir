@@ -39,8 +39,7 @@ namespace Auth.API.Domain
             var resultValidation = ResultValidation.ValidateCollectErrors(
                 () => string.IsNullOrWhiteSpace(Name)
                 ? Result.Fail(UserError.NameRequired)
-                : Result.Ok(),
-                () => Name.Length < 3 || Name.Length > 50
+                : Name.Length < 3 || Name.Length > 50
                 ? Result.Fail(UserError.NameLength)
                 : Result.Ok(),
 
@@ -50,9 +49,7 @@ namespace Auth.API.Domain
 
                 () => string.IsNullOrWhiteSpace(Phone)
                ? Result.Fail(UserError.PhoneRequired)
-               : Result.Ok(),
-
-                () => Phone.Length > 13 || Phone.Length < 11
+               : Phone.Length > 13 || Phone.Length < 11
                ? Result.Fail(UserError.PhoneInvalid)
                : Result.Ok(),
 

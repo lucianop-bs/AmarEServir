@@ -35,9 +35,7 @@ public record class Address(
 
             () => string.IsNullOrWhiteSpace(Numero)
             ? Result.Fail(UserError.NumeroRequired)
-            : Result.Ok(),
-
-            () => Numero.Length > 20
+            : Numero.Length > 20
             ? Result.Fail(UserError.NumeroLimit)
             : Result.Ok(),
 
