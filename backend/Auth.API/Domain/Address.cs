@@ -33,12 +33,8 @@ public record class Address(
             ? Result.Fail(UserError.RuaInvalid)
             : Result.Ok(),
 
-            () => string.IsNullOrWhiteSpace(Numero)
-            ? Result.Fail(UserError.NumeroRequired)
-            : Result.Ok(),
-
-            () => Numero.Length > 20
-            ? Result.Fail(UserError.NumeroLimit)
+            () => string.IsNullOrWhiteSpace(Numero) || Numero.Length > 20
+            ? Result.Fail(string.IsNullOrWhiteSpace(Numero) ? UserError.NumeroRequired : UserError.NumeroLimit)
             : Result.Ok(),
 
             () => string.IsNullOrWhiteSpace(Bairro)
