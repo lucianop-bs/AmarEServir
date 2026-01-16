@@ -44,7 +44,7 @@ namespace Auth.API.Domain
         public static Error InvalidForRole => new("User.Role", "Você não é lider de nenhuma célula.", ErrorType.Validation);
 
         public static Error AddressRequired => new("User.Address", "O endereço deve ser preenchido.", ErrorType.Validation);
-        public static Error NameLength => new("User.Name", "O nome deve conter 2 a 50 caracteres.", ErrorType.Validation);
+        public static Error NameLength => new("User.Name", "O nome deve conter de 3 a 50 caracteres.", ErrorType.Validation);
         public static Error PhoneRequired => new("User.Phone", "O telefone deve ser preenchido.", ErrorType.Validation);
 
     }
