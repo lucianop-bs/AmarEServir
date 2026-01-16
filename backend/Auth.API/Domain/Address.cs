@@ -37,7 +37,7 @@ public record class Address(
             ? Result.Fail(UserError.NumeroRequired)
             : Result.Ok(),
 
-            () => Numero.Length >= 20 || Numero.Length < 2
+            () => Numero.Length > 20
             ? Result.Fail(UserError.NumeroLimit)
             : Result.Ok(),
 
