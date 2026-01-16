@@ -1,5 +1,4 @@
-﻿
-using AmarEServir.Core.Results.Errors;
+﻿using AmarEServir.Core.Results.Errors;
 
 namespace Auth.API.Domain
 {
@@ -19,27 +18,29 @@ namespace Auth.API.Domain
 
         public static Error PhoneInvalid => new("User.Phone", "Telefone invalido", ErrorType.Validation);
 
-        public static Error CepRequired = new("Address.Cep", "O CEP é obrigatório.", ErrorType.Validation);
+        public static Error CepRequired => new("Address.Cep", "O CEP é obrigatório.", ErrorType.Validation);
 
-        public static Error CepFormat = new("Address.Cep", "O CEP deve estar no formato 00000-000.", ErrorType.Validation);
+        public static Error CepFormat => new("Address.Cep", "O CEP deve estar no formato 00000-000.", ErrorType.Validation);
 
-        public static Error EstadoInvalid = new("Address.Estado", "O estado deve conter 2 caracteres.", ErrorType.Validation);
+        public static Error EstadoInvalid => new("Address.Estado", "O estado deve conter 2 caracteres.", ErrorType.Validation);
 
-        public static Error RuaInvalid = new("Address.Rua", "A rua deve conter no máximo 100 caracteres.", ErrorType.Validation);
+        public static Error RuaInvalid => new("Address.Rua", "A rua deve conter no máximo 100 caracteres.", ErrorType.Validation);
 
-        public static Error BairroRequired = new("Address.Bairro", "O bairro é obrigatório.", ErrorType.Validation);
+        public static Error BairroRequired => new("Address.Bairro", "O bairro é obrigatório.", ErrorType.Validation);
 
-        public static Error CidadeRequired = new("Address.Cidade", "A cidade é obrigatória.", ErrorType.Validation);
+        public static Error CidadeRequired => new("Address.Cidade", "A cidade é obrigatória.", ErrorType.Validation);
 
-        public static Error NumeroLimit = new("Address.Lote", "O lote deve conter no máximo 20 caracteres.", ErrorType.Validation);
+        public static Error NumeroLimit => new("Address.Lote", "O lote deve conter no máximo 20 caracteres.", ErrorType.Validation);
 
-        public static Error QuadraLimit = new("Address.Quadra", "A quadra deve conter no máximo 20 caracteres.", ErrorType.Validation);
+        public static Error QuadraLimit => new("Address.Quadra", "A quadra deve conter no máximo 20 caracteres.", ErrorType.Validation);
 
-        public static Error ComplementoLimit = new("Address.Complemento", "O complemento deve conter no máximo 100 caracteres.", ErrorType.Validation);
+        public static Error ComplementoLimit => new("Address.Complemento", "O complemento deve conter no máximo 100 caracteres.", ErrorType.Validation);
 
-        public static Error RoleRequired = new("User.Role", "Lider, adicione o nome da sua celula.", ErrorType.Validation);
+        public static Error RoleRequired => new("User.Role", "Lider, adicione o nome da sua celula.", ErrorType.Validation);
 
-        public static Error InvalidForRole = new("User.Role", "Você não é lider de nenhuma celula.", ErrorType.Validation);
+        public static Error InvalidForRole => new("User.Role", "Você não é lider de nenhuma celula.", ErrorType.Validation);
+
+        public static Error AddressRequired => new("User.Address", "Endereço deve ser preenchido", ErrorType.Validation);
 
     }
 }

@@ -55,10 +55,14 @@ namespace Auth.API.Domain
 
                () => !Enum.IsDefined(Role)
                ? Result.Fail(UserError.RoleRequired)
-               : Result.Ok()
+               : Result.Ok(),
+
+               () => Address == null
+               ? Result.Fail(UserError.AddressRequired)
+               : Address.Validate()
                );
 
-            Address.Validate();
+         
             if (!resultValidation.IsSuccess)
                 return Result.Fail(resultValidation.Errors);
 
