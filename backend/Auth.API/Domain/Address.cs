@@ -41,7 +41,7 @@ public record class Address(
             ? Result.Fail(UserError.NumeroLimit)
             : Result.Ok(),
 
-            () => string.IsNullOrWhiteSpace(Bairro) || Bairro.Length >= 200 || Bairro.Length < 2
+            () => string.IsNullOrWhiteSpace(Bairro)
             ? Result.Fail(UserError.BairroRequired)
             : Result.Ok(),
 
