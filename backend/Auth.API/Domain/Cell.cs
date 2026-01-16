@@ -1,5 +1,6 @@
 ﻿using AmarEServir.Core.Entities;
 using AmarEServir.Core.Results.Base;
+using AmarEServir.Core.Results.Extensions;
 
 namespace Auth.API.Domain
 {
@@ -26,18 +27,18 @@ namespace Auth.API.Domain
 
         public Result Validate()
         {
-            if (string.IsNullOrWhiteSpace(Name))
-            {
-                return Result.Fail(CellError.InvalidName);
-            }
-            if (Name.Length < 4 || Name.Length > 50)
-            {
-                return Result.Fail(CellError.InvalidNameLength);
-            }
-            if (LeaderId == Guid.Empty || LeaderId is null)
-            {
-                return Result.Fail(CellError.LeaderRequired);
-            }
+            var resultValidation = ResultValidation.ValidateCollectErrors(
+                () => string.IsNullOrWhiteSpace(Name) || Name.Length < 3 || Name.Length > 50
+                ? Result.Fail(CellError.InvalidName)
+                : Result.Ok(),
+
+                () => LeaderId == Guid.Empty || LeaderId is null
+                ? Result.Fail(CellError.LeaderRequired)
+                : Result.Ok()
+                );
+
+            if (!resultValidation.IsSuccess)
+                return Result.Fail(resultValidation.Errors);
 
             return Result.Ok();
         }
