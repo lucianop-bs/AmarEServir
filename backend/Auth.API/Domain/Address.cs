@@ -21,7 +21,7 @@ public record class Address(
             ? Result.Fail(UserError.CepRequired)
             : Result.Ok(),
 
-            () => Cep.Length != 8
+            () => !string.IsNullOrWhiteSpace(Cep) && Cep.Length != 8
             ? Result.Fail(UserError.CepFormat)
             : Result.Ok(),
 
