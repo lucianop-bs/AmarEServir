@@ -51,10 +51,6 @@ public record class Address(
 
             () => string.IsNullOrWhiteSpace(Cidade) || Cidade.Length >= 100 || Cidade.Length < 2
             ? Result.Fail(UserError.CidadeInvalid)
-            : Result.Ok(),
-
-            () => Cidade.Length >= 100 || Cidade.Length < 2
-            ? Result.Fail(UserError.CidadeInvalid)
             : Result.Ok()
             );
 
