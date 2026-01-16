@@ -17,7 +17,7 @@ public record class Address(
     public Result Validate()
     {
         var resultValidation = ResultValidation.ValidateCollectErrors(
-            () => string.IsNullOrWhiteSpace(Cep)
+            () => string.IsNullOrWhiteSpace(Cep) || Cep.Length != 8
             ? Result.Fail(UserError.CepRequired)
             : Result.Ok(),
 
@@ -25,22 +25,22 @@ public record class Address(
             ? Result.Fail(UserError.EstadoInvalid)
             : Result.Ok(),
 
-            () => string.IsNullOrWhiteSpace(Rua)
+            () => string.IsNullOrWhiteSpace(Rua) || Rua.Length >= 100 || Rua.Length < 2
             ? Result.Fail(UserError.RuaInvalid)
             : Result.Ok(),
 
-            () => string.IsNullOrWhiteSpace(Numero)
+            () => string.IsNullOrWhiteSpace(Numero) || Numero.Length >= 20 || Numero.Length < 2
             ? Result.Fail(UserError.NumeroLimit)
             : Result.Ok(),
 
-            () => string.IsNullOrWhiteSpace(Bairro)
+            () => string.IsNullOrWhiteSpace(Bairro) || Bairro.Length >= 200 || Bairro.Length < 2
             ? Result.Fail(UserError.BairroRequired)
             : Result.Ok(),
-
-            () => string.IsNullOrWhiteSpace(Cidade)
+            () => string.IsNullOrWhiteSpace(Cidade) || Cidade.Length >= 100 || Cidade.Length < 2
             ? Result.Fail(UserError.CidadeRequired)
             : Result.Ok()
             );
+
         if (!resultValidation.IsSuccess)
             return Result.Fail(resultValidation.Errors);
 
