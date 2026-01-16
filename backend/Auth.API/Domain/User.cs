@@ -40,7 +40,7 @@ namespace Auth.API.Domain
                 () => string.IsNullOrWhiteSpace(Name)
                 ? Result.Fail(UserError.NameRequired)
                 : Result.Ok(),
-                  () => Name.Length < 3 || Name.Length > 50
+                () => Name.Length < 3 || Name.Length > 50
                 ? Result.Fail(UserError.NameLength)
                 : Result.Ok(),
 
