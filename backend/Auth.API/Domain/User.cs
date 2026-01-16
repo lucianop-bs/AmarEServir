@@ -70,7 +70,6 @@ namespace Auth.API.Domain
                );
 
             if (!resultValidation.IsSuccess)
-
                 return Result.Fail(resultValidation.Errors);
 
             return Result.Ok();
