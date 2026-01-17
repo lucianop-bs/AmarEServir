@@ -1,5 +1,6 @@
 ﻿using AmarEServir.Core.Entities;
 using AmarEServir.Core.Results.Base;
+using AmarEServir.Core.Results.Extensions;
 
 namespace Auth.API.Domain
 {
@@ -21,8 +22,6 @@ namespace Auth.API.Domain
             string phone,
             string password,
             Address address,
-            Guid? celulaId,
-            string cellName,
             UserRole role,
             Guid? id = null)
         {
@@ -37,26 +36,41 @@ namespace Auth.API.Domain
 
         public Result Validate()
         {
-            if (string.IsNullOrWhiteSpace(Name) || Name.Length < 3 || Name.Length > 50)
-                return Result.Fail(UserError.NameRequired);
+            var resultValidation = ResultValidation.ValidateCollectErrors(
+                () => string.IsNullOrWhiteSpace(Name)
+                ? Result.Fail(UserError.NameRequired)
+                : Name.Length < 3 || Name.Length > 50
+                ? Result.Fail(UserError.NameLength)
+                : Result.Ok(),
 
-            if (string.IsNullOrWhiteSpace(Email) || !Email.Contains('@'))
-                return Result.Fail(UserError.InvalidEmail);
+                () => string.IsNullOrWhiteSpace(Email) || !Email.Contains('@')
+                ? Result.Fail(UserError.InvalidEmail)
+                : Result.Ok(),
 
-            if (string.IsNullOrWhiteSpace(Phone))
-                return Result.Fail(UserError.PhoneInvalid);
+                () => string.IsNullOrWhiteSpace(Phone)
+               ? Result.Fail(UserError.PhoneRequired)
+               : Phone.Length > 13 || Phone.Length < 11
+               ? Result.Fail(UserError.PhoneInvalid)
+               : Result.Ok(),
 
-            if (string.IsNullOrWhiteSpace(Password) || Password.Length <= 6)
-                return Result.Fail(UserError.WeakPassword);
+                 () => string.IsNullOrWhiteSpace(Password) || Password.Length <= 6
+               ? Result.Fail(UserError.WeakPassword)
+               : Result.Ok(),
 
-            if (!Enum.IsDefined(Role))
-                return Result.Fail(UserError.TypeInvalid);
-            var addressValidation = Address.Validate();
+               () => !Enum.IsDefined(Role)
+               ? Result.Fail(UserError.RoleInvalid)
+               : Result.Ok(),
 
-            if (!addressValidation.IsSuccess)
-                return addressValidation;
+               () => Address == null
+               ? Result.Fail(UserError.AddressRequired)
+               : Address.Validate()
+               );
+
+            if (!resultValidation.IsSuccess)
+                return Result.Fail(resultValidation.Errors);
 
             return Result.Ok();
+
         }
     }
 }
