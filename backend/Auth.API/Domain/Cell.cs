@@ -28,7 +28,7 @@ namespace Auth.API.Domain
         public Result Validate()
         {
             var resultValidation = ResultValidation.ValidateCollectErrors(
-                () => string.IsNullOrWhiteSpace(Name) || Name.Length < 3 || Name.Length > 50
+                () => string.IsNullOrWhiteSpace(Name) || Name.Length < 4 || Name.Length > 50
                 ? Result.Fail(CellError.InvalidName)
                 : Result.Ok(),
 
