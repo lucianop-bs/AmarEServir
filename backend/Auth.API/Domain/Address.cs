@@ -19,7 +19,9 @@ public record class Address(
         var resultValidation = ResultValidation.ValidateCollectErrors(
             () => string.IsNullOrWhiteSpace(Cep)
             ? Result.Fail(UserError.CepRequired)
-            : (Cep.Length != 8)
+            : Result.Ok(),
+
+            () => !string.IsNullOrWhiteSpace(Cep) && Cep.Length != 8
             ? Result.Fail(UserError.CepFormat)
             : Result.Ok(),
 
@@ -31,19 +33,18 @@ public record class Address(
             ? Result.Fail(UserError.RuaInvalid)
             : Result.Ok(),
 
-            () => string.IsNullOrWhiteSpace(Numero)
-            ? Result.Fail(UserError.NumeroRequired)
-            : (Numero.Length > 20)
-            ? Result.Fail(UserError.NumeroLimit)
+            () => string.IsNullOrWhiteSpace(Numero) || Numero.Length > 20
+            ? Result.Fail(string.IsNullOrWhiteSpace(Numero) ? UserError.NumeroRequired : UserError.NumeroLimit)
             : Result.Ok(),
 
             () => string.IsNullOrWhiteSpace(Bairro)
             ? Result.Fail(UserError.BairroRequired)
-            : (Bairro.Length >= 200 || Bairro.Length < 2)
-            ? Result.Fail(UserError.BairroInvalid)
             : Result.Ok(),
 
-            () => string.IsNullOrWhiteSpace(Cidade) || Cidade.Length >= 100 || Cidade.Length < 2
+            () => !string.IsNullOrWhiteSpace(Bairro) && (Bairro.Length < 2 || Bairro.Length > 200)
+            ? Result.Fail(UserError.BairroInvalid)
+            : Result.Ok(),
+            () => string.IsNullOrWhiteSpace(Cidade) || Cidade.Length > 100 || Cidade.Length < 2
             ? Result.Fail(UserError.CidadeInvalid)
             : Result.Ok()
             );
