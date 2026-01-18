@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AmarEServir.Core.Results.Base;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -10,34 +11,33 @@ public class ApiResultFilter : IActionFilter
 
     public void OnActionExecuted(ActionExecutedContext context)
     {
-        // Intercepta o resultado antes de virar JSON
-        if (context.Result is ObjectResult objectResult && objectResult.Value != null)
+        if (context.Result is ObjectResult objectResult && objectResult.Value is IResultBase result)
         {
-            var type = objectResult.Value.GetType();
+            var resultType = result.GetType();
 
-            // Só processa se for uma de suas classes de Result
-            if (type.Name.Contains("Result"))
+            if (result.IsSuccess)
             {
-                // Mapeamento dinâmico para não errar o nome da propriedade
-                var isSuccessProp = type.GetProperty("IsSuccess") ?? type.GetProperty("Success");
-                var dataProp = type.GetProperty("Value") ?? type.GetProperty("Data");
-                var errorsProp = type.GetProperty("Errors");
+           
+                var dataProp = resultType.GetProperty("Value");
+                objectResult.Value = dataProp?.GetValue(result);
+            }
+            else
+            {
+                
+                objectResult.Value = result.Errors;
 
-                if (isSuccessProp != null)
+          
+                var statusProp = resultType.GetProperty("Status") ?? resultType.GetProperty("StatusCode");
+
+                if (statusProp != null)
                 {
-                    bool isSuccess = (bool)isSuccessProp.GetValue(objectResult.Value)!;
-
-                    if (isSuccess)
-                    {
-                        // SUCESSO: Entrega apenas o conteúdo (ID, Nome, etc)
-                        objectResult.Value = dataProp?.GetValue(objectResult.Value);
-                    }
-                    else
-                    {
-                        // FALHA: Entrega a lista de erros e força o Status 400
-                        objectResult.Value = errorsProp?.GetValue(objectResult.Value);
-                        objectResult.StatusCode = StatusCodes.Status400BadRequest;
-                    }
+                    
+                    objectResult.StatusCode = (int)statusProp.GetValue(result)!;
+                }
+                else
+                {
+                   
+                    objectResult.StatusCode = StatusCodes.Status400BadRequest;
                 }
             }
         }

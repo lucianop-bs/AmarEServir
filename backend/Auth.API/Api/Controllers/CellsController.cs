@@ -6,7 +6,6 @@ using Auth.API.Application.Cells.Models;
 using Auth.API.Application.Cells.UpdateCell;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
 
 namespace Auth.API.Api.Controllers
 {
@@ -22,14 +21,14 @@ namespace Auth.API.Api.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(CellModelView), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(CreateCellCommand), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
 
         public async Task<IActionResult> CreateCell(CreateCellCommand command)
         {
             var result = await _mediator.Send(command);
 
-            return CreatedAtRoute("GetCellByGuid", new { id = result.IsSuccess ? result.Value.Id : Guid.Empty },result);
+            return CreatedAtRoute("GetCellByGuid", new { id = result.IsSuccess ? result.Value.Id : Guid.Empty }, result.ToApiResult().ToActionResult());
         }
 
         [HttpGet("{id}", Name = "GetCellByGuid")]
@@ -43,9 +42,9 @@ namespace Auth.API.Api.Controllers
         }
 
         [HttpPatch("{id}")]
-        [ProducesResponseType(typeof(CellModelView), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(UpdateCellRequest), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> UpdateCell([FromRoute] Guid id, UpdateCellRequest command)
+        public async Task<IActionResult> UpdateCell([FromRoute] Guid id, [FromBody] UpdateCellRequest command)
         {
             var result = await _mediator.Send(new UpdateCellCommand(id, command.Name, command.LiderId));
 

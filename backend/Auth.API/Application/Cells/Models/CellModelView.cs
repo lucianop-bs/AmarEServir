@@ -13,7 +13,7 @@ namespace Auth.API.Application.Cells.Models
                 cell.Id,
                 cell.Name,
                 cell.LeaderId.ToString(),
-                cell.Users?.Select(user => user.ToModelUserView()).ToList() ?? []
+                cell.Members?.Select(user => user.ToModelUserView()).ToList() ?? []
 
                 );
         }

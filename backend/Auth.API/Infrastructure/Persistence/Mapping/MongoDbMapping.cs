@@ -48,7 +48,7 @@ namespace Auth.API.Infrastructure.Persistence.Mapping
                     cm.MapMember(c => c.LeaderId)
                     .SetIsRequired(true);
 
-                    cm.UnmapProperty(c => c.Users);
+                    cm.UnmapProperty(c => c.Members);
 
                 });
             }
