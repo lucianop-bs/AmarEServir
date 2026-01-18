@@ -52,7 +52,7 @@ namespace Auth.API.Application.Cells.CreateCell
             return Result<CellModelView>.Ok(response);
         }
 
-        public Result IsLeader(User user, Guid leaderId)
+        public Result IsLeader(User user)
         {
             if (user.Role != UserRole.Leader)
             {

@@ -1,7 +1,6 @@
 ﻿using AmarEServir.Core.Entities;
 using AmarEServir.Core.Results.Base;
 using AmarEServir.Core.Results.Extensions;
-using System.Xml.Linq;
 
 namespace Auth.API.Domain
 {
@@ -25,7 +24,6 @@ namespace Auth.API.Domain
             LeaderId = leaderId;
             Members.Add(membro);
         }
-
 
         public Result Validate()
         {
@@ -68,13 +66,13 @@ namespace Auth.API.Domain
                 if (!Members.Any(getMember => getMember.Id == member.Id))
 
                 {
-                    
+
                     Members.Add(member);
                 }
             }
             SetUpdatedAtDate(DateTime.UtcNow);
             var validation = Validate();
-            
+
             if (!validation.IsSuccess)
                 return Result<Cell>.Fail(validation.Errors);
 

@@ -1,5 +1,4 @@
 ﻿using AmarEServir.Core.Results.Extensions;
-using Auth.API.Application.Cells.UpdateCell;
 using Auth.API.Application.Users.CreateUser;
 using Auth.API.Application.Users.GetUserByGuid;
 using Auth.API.Application.Users.Models;
@@ -47,7 +46,7 @@ namespace Auth.API.Api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> UpdateUser([FromRoute] Guid id, [FromBody] UpdateUserRequest request)
         {
-            var result = await _mediator.Send(new UpdateUserCommand(id,request));
+            var result = await _mediator.Send(new UpdateUserCommand(id, request));
 
             return result.ToApiResult().ToActionResult();
         }

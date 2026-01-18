@@ -31,7 +31,7 @@ public static class ApiResultExtensions
     {
         if (apiResult.Status >= 400)
         {
-           
+
             var firstError = apiResult.Errors?.FirstOrDefault();
 
             return new ObjectResult(new
@@ -45,12 +45,10 @@ public static class ApiResultExtensions
             };
         }
 
-
         if (apiResult.Status == StatusCodes.Status204NoContent)
         {
             return new ObjectResult(null) { StatusCode = StatusCodes.Status204NoContent };
         }
-
 
         var data = apiResult.GetType().GetProperty("Data")?.GetValue(apiResult);
 

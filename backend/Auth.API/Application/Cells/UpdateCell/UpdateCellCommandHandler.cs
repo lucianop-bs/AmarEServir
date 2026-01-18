@@ -35,7 +35,6 @@ namespace Auth.API.Application.Cells.UpdateCell
 
             var cellUpdate = cell.Update(request.Name, request.LiderId, usuario);
 
-            
             if (!cellUpdate.IsSuccess)
             {
                 return Result.Fail(cellUpdate.Errors);

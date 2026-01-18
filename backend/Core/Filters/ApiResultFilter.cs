@@ -17,26 +17,25 @@ public class ApiResultFilter : IActionFilter
 
             if (result.IsSuccess)
             {
-           
+
                 var dataProp = resultType.GetProperty("Value");
                 objectResult.Value = dataProp?.GetValue(result);
             }
             else
             {
-                
+
                 objectResult.Value = result.Errors;
 
-          
                 var statusProp = resultType.GetProperty("Status") ?? resultType.GetProperty("StatusCode");
 
                 if (statusProp != null)
                 {
-                    
+
                     objectResult.StatusCode = (int)statusProp.GetValue(result)!;
                 }
                 else
                 {
-                   
+
                     objectResult.StatusCode = StatusCodes.Status400BadRequest;
                 }
             }

@@ -6,8 +6,6 @@ using MediatR;
 namespace Auth.API.Application.Users.CreateUser
 {
 
-    
-
     public interface ICreateUserCommandHandler : IRequestHandler<CreateUserCommand, Result<UserModelView>>
     {
     }

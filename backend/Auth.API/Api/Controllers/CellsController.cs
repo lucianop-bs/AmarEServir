@@ -21,14 +21,14 @@ namespace Auth.API.Api.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(CreateCellCommand), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(CellModelView), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
 
         public async Task<IActionResult> CreateCell(CreateCellCommand command)
         {
             var result = await _mediator.Send(command);
 
-            return CreatedAtRoute("GetCellByGuid", new { id = result.IsSuccess ? result.Value.Id : Guid.Empty }, result.ToApiResult().ToActionResult());
+            return CreatedAtRoute("GetCellByGuid", new { id = result.IsSuccess ? result.Value.Id : Guid.Empty }, result));
         }
 
         [HttpGet("{id}", Name = "GetCellByGuid")]
@@ -42,7 +42,7 @@ namespace Auth.API.Api.Controllers
         }
 
         [HttpPatch("{id}")]
-        [ProducesResponseType(typeof(UpdateCellRequest), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> UpdateCell([FromRoute] Guid id, [FromBody] UpdateCellRequest command)
         {
