@@ -1,6 +1,8 @@
-﻿using Auth.API.Application.Users.CreateUser;
+﻿using AmarEServir.Core.Results.Extensions;
+using Auth.API.Application.Users.CreateUser;
 using Auth.API.Application.Users.GetUserByGuid;
 using Auth.API.Application.Users.Models;
+using Auth.API.Application.Users.UpdateUser;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,24 +26,29 @@ namespace Auth.API.Api.Controllers
         {
             var result = await _mediator.Send(new GetUserByGuidQuery(id));
 
-            return Ok(result);
+            return result.ToApiResult().ToActionResult();
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(CreatedUserResponse), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(UserModelView), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
 
         public async Task<IActionResult> CreateUser(CreateUserCommand command)
         {
             var result = await _mediator.Send(command);
-            if (!result.IsSuccess)
-            {
 
-                return BadRequest(result.Errors);
-            }
+            return CreatedAtAction(nameof(GetUser), new { id = result.IsSuccess ? result.Value.Id : Guid.Empty }, result);
 
-            return CreatedAtAction(nameof(GetUser), new { id = result.Value.Id }, result.Value);
+        }
 
+        [HttpPatch("{id}")]
+        [ProducesResponseType(typeof(UpdateUserRequest), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> UpdateUser([FromRoute] Guid id, [FromBody] UpdateUserRequest request)
+        {
+            var result = await _mediator.Send(new UpdateUserCommand(id, request));
+
+            return result.ToApiResult().ToActionResult();
         }
     }
 }

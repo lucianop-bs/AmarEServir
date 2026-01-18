@@ -9,7 +9,7 @@ namespace Auth.API.Domain
         public string Name { get; private set; }
         public Guid? LeaderId { get; private set; }
         public User Lider { get; private set; }
-        public List<User> Users { get; private set; } = [];
+        public List<User> Members { get; private set; } = [];
 
         public Cell() { }
 
@@ -22,7 +22,7 @@ namespace Auth.API.Domain
             Id = id ?? Guid.NewGuid();
             Name = name;
             LeaderId = leaderId;
-            Users.Add(membro);
+            Members.Add(membro);
         }
 
         public Result Validate()
@@ -43,27 +43,40 @@ namespace Auth.API.Domain
             return Result.Ok();
         }
 
-        public Result Update(string name, Guid? leaderId, User membro)
+        public Result<Cell> Update(string name, Guid? leaderId, User member)
         {
-            if (!string.IsNullOrWhiteSpace(Name))
+            if (!string.IsNullOrWhiteSpace(name))
             {
                 Name = name;
             }
-            if (leaderId != Guid.Empty || leaderId is not null)
+            if (leaderId.HasValue && leaderId.Value != Guid.Empty)
             {
+                if (member is null) return Result<Cell>.Fail(CellError.NotFound);
 
-                if (Users.Any(u => u.Id == leaderId))
+                if (LeaderId != leaderId)
+                {
+                    var index = Members.FindIndex(getMember => getMember.Id == LeaderId);
+                    if (index != -1)
+                    {
+                        Members.RemoveAt(index);
+
+                    }
+                }
+                LeaderId = leaderId;
+                if (!Members.Any(getMember => getMember.Id == member.Id))
 
                 {
-                    Users.RemoveAt(Users.FindIndex(u => u.Id == LeaderId));
-                    LeaderId = leaderId;
-                    Users.Add(membro);
-                    SetUpdatedAtDate(DateTime.UtcNow);
 
+                    Members.Add(member);
                 }
             }
+            SetUpdatedAtDate(DateTime.UtcNow);
+            var validation = Validate();
 
-            return Result.Ok();
+            if (!validation.IsSuccess)
+                return Result<Cell>.Fail(validation.Errors);
+
+            return Result<Cell>.Ok(this);
 
         }
     }

@@ -1,55 +1,42 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AmarEServir.Core.Results.Base;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using System.Collections;
 
-namespace AmarEServir.Core.Filters
+namespace AmarEServir.Core.Filters;
+
+public class ApiResultFilter : IActionFilter
 {
-    public class ApiResultFilter : IActionFilter
+    public void OnActionExecuting(ActionExecutingContext context) { }
+
+    public void OnActionExecuted(ActionExecutedContext context)
     {
-        public void OnActionExecuting(ActionExecutingContext context) { }
-
-        public void OnActionExecuted(ActionExecutedContext context)
+        if (context.Result is ObjectResult objectResult && objectResult.Value is IResultBase result)
         {
-            if (context.Result is ObjectResult objectResult)
+            var resultType = result.GetType();
+
+            if (result.IsSuccess)
             {
-                var resultValue = objectResult.Value;
-                if (resultValue == null) return;
 
-                var type = resultValue.GetType();
+                var dataProp = resultType.GetProperty("Value");
+                objectResult.Value = dataProp?.GetValue(result);
+            }
+            else
+            {
 
-                if (type.Name.StartsWith("Result"))
+                objectResult.Value = result.Errors;
+
+                var statusProp = resultType.GetProperty("Status") ?? resultType.GetProperty("StatusCode");
+
+                if (statusProp != null)
                 {
-                    var isSuccess = (bool)type.GetProperty("IsSuccess")?.GetValue(resultValue)!;
 
-                    if (isSuccess)
-                    {
+                    objectResult.StatusCode = (int)statusProp.GetValue(result)!;
+                }
+                else
+                {
 
-                        var data = type.GetProperty("Value")?.GetValue(resultValue);
-                        context.Result = new OkObjectResult(data);
-                    }
-                    else
-                    {
-
-                        var errors = type.GetProperty("Errors")?.GetValue(resultValue) as IEnumerable;
-                        var firstError = errors?.Cast<object>().FirstOrDefault();
-
-                        if (firstError != null)
-                        {
-
-                            var message = firstError.GetType().GetProperty("Message")?.GetValue(firstError)?.ToString();
-
-                            var errorStatus = (int)(firstError.GetType().GetProperty("Status")?.GetValue(firstError) ?? 400);
-
-                            context.Result = new ObjectResult(new
-                            {
-                                status = errorStatus,
-                                message = message
-                            })
-                            {
-                                StatusCode = errorStatus
-                            };
-                        }
-                    }
+                    objectResult.StatusCode = StatusCodes.Status400BadRequest;
                 }
             }
         }

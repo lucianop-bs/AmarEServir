@@ -1,40 +1,65 @@
 ﻿using AmarEServir.Core.Results.Base;
+using Auth.API.Application.Cells.Models;
 using Auth.API.Domain;
 using Auth.API.Domain.Contracts;
 using MediatR;
 
 namespace Auth.API.Application.Cells.CreateCell
 {
-    public record CreatedCellResponse(Guid Id, string Message = "Célula criada com sucesso!");
-    public class CreateCellCommandHandler : IRequestHandler<CreateCellCommand, Result<CreatedCellResponse>>
+
+    public class CreateCellCommandHandler : IRequestHandler<CreateCellCommand, Result<CellModelView>>
     {
         private readonly ICellRepository _cellRepository;
+        private readonly IUserRepository _userRepository;
 
-        public CreateCellCommandHandler(ICellRepository cellRepository)
+        public CreateCellCommandHandler(ICellRepository cellRepository, IUserRepository userRepository)
         {
             _cellRepository = cellRepository;
+            _userRepository = userRepository;
         }
 
-        public async Task<Result<CreatedCellResponse>> Handle(CreateCellCommand request, CancellationToken cancellationToken)
+        public async Task<Result<CellModelView>> Handle(CreateCellCommand request, CancellationToken cancellationToken)
         {
-            var endereco = new Address("Amazonas", "2", "12", "Alto Das Caraibas", "Luziania", "GO", "TESTE", "72813110");
-            var usuario = new User(name: "Miqueias", email: "miqueias@ipcc.com", phone: "61996100819", password: "123456789", endereco, Guid.NewGuid(), "Sou + Jesus", UserRole.Leader);
 
-            var validacaoUser = usuario.Validate();
+            var user = await _userRepository.GetUserByGuid(request.LeaderId);
 
-            if (!validacaoUser.IsSuccess) return Result<CreatedCellResponse>.Fail(validacaoUser.Errors);
+            if (user is null)
+            {
+                return Result<CellModelView>.Fail(UserError.NotFound);
+            }
 
-            var cell = new Cell(usuario.Name, usuario.Id, usuario);
+            var userLeaderValidation = IsLeader(user, request.LeaderId);
 
-            var validacaoCell = cell.Validate();
+            if (!userLeaderValidation.IsSuccess)
+            {
 
-            if (!validacaoCell.IsSuccess) return Result<CreatedCellResponse>.Fail(validacaoCell.Errors);
+                return Result<CellModelView>.Fail(CellError.LeaderRequired);
+
+            }
+
+            var cell = new Cell(request.Name, user.Id, user);
+            var cellValidation = cell.Validate();
+
+            if (!cellValidation.IsSuccess)
+            {
+                return Result<CellModelView>.Fail(cellValidation.Errors);
+            }
 
             await _cellRepository.Create(cell);
 
-            var response = new CreatedCellResponse(cell.Id);
+            var response = cell.ToModelView();
 
-            return Result<CreatedCellResponse>.Ok(response);
+            return Result<CellModelView>.Ok(response);
+        }
+
+        public Result IsLeader(User user)
+        {
+            if (user.Role != UserRole.Leader)
+            {
+                return Result.Fail(CellError.LeaderRequired);
+            }
+
+            return Result.Ok();
         }
     }
 }

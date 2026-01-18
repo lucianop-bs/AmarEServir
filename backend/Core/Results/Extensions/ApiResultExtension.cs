@@ -27,19 +27,17 @@ public static class ApiResultExtensions
         return new ApiResult<TValue>(result, statusCode);
     }
 
-    // CORREÇÃO: Para Controllers (MVC)
     public static ObjectResult ToActionResult(this IApiResult apiResult)
     {
-        // 1. TRATAMENTO DE ERRO (Status 400+)
         if (apiResult.Status >= 400)
         {
-            // .FirstOrDefault() evita o erro de "Index out of range" se a lista estiver vazia
+
             var firstError = apiResult.Errors?.FirstOrDefault();
 
             return new ObjectResult(new
             {
                 status = apiResult.Status,
-                // Usamos Detail ou Message conforme definido no seu ApiError
+
                 message = firstError?.Detail ?? "Ocorreu um erro inesperado."
             })
             {
@@ -47,18 +45,19 @@ public static class ApiResultExtensions
             };
         }
 
-        // 2. TRATAMENTO DE SUCESSO 204 (No Content)
         if (apiResult.Status == StatusCodes.Status204NoContent)
         {
             return new ObjectResult(null) { StatusCode = StatusCodes.Status204NoContent };
         }
 
-        // 3. TRATAMENTO DE SUCESSO COM DADOS
-        // Pegamos o valor da propriedade "Data" do ApiResult<TValue>
         var data = apiResult.GetType().GetProperty("Data")?.GetValue(apiResult);
 
-        // RETORNO DIRETO: Aqui removemos o 'new { data }' para não vir {"data": null}
         return new ObjectResult(data) { StatusCode = apiResult.Status };
+    }
+    public static ApiResult ToCreatedResult<TValue>(this IResultBase<TValue> result)
+    {
+
+        return result.ToApiResult(HttpStatusCode.Created);
     }
 
     public static IResult ToResult(this IApiResult apiResult)

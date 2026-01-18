@@ -6,7 +6,6 @@ using Auth.API.Application.Cells.Models;
 using Auth.API.Application.Cells.UpdateCell;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
 
 namespace Auth.API.Api.Controllers
 {
@@ -22,34 +21,34 @@ namespace Auth.API.Api.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(CreatedCellResponse), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(CellModelView), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
 
         public async Task<IActionResult> CreateCell(CreateCellCommand command)
         {
             var result = await _mediator.Send(command);
 
-            return CreatedAtAction(nameof(GetCell), new { id = result.Value.Id }, result.Value);
+            return CreatedAtRoute("GetCellByGuid", new { id = result.IsSuccess ? result.Value.Id : Guid.Empty }, result));
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "GetCellByGuid")]
         [ProducesResponseType(typeof(CellModelView), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetCell(Guid id)
         {
             var result = await _mediator.Send(new GetCellByGuidQuery(id));
 
-            return Ok(result);
+            return result.ToApiResult().ToActionResult();
         }
 
         [HttpPatch("{id}")]
-        [ProducesResponseType(typeof(CellModelView), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> UpdateCell([FromRoute] Guid id, UpdateCellRequest command)
+        public async Task<IActionResult> UpdateCell([FromRoute] Guid id, [FromBody] UpdateCellRequest command)
         {
             var result = await _mediator.Send(new UpdateCellCommand(id, command.Name, command.LiderId));
 
-            return Ok(result);
+            return result.ToApiResult().ToActionResult();
         }
 
         [HttpDelete("{id}")]
@@ -59,7 +58,7 @@ namespace Auth.API.Api.Controllers
         {
             var result = await _mediator.Send(new DeleteCellCommand(id));
 
-            return result.ToApiResult(HttpStatusCode.NoContent).ToActionResult();
+            return result.ToApiResult().ToActionResult();
         }
     }
 }
