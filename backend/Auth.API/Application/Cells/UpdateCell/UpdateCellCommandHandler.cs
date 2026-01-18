@@ -33,14 +33,14 @@ namespace Auth.API.Application.Cells.UpdateCell
                 return Result.Fail(CellError.NotFound);
             }
 
-            cell.Update(request.Name, request.LiderId, usuario);
+            var cellUpdate = cell.Update(request.Name, request.LiderId, usuario);
 
-            var validationResult = cell.Validate();
+            var validationResult = cellUpdate.Validate();
             if (!validationResult.IsSuccess)
             {
                 return Result.Fail(validationResult.Errors);
             }
-
+            await _cellRepository.Update(cellUpdate);
             return Result.Ok();
 
         }

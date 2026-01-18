@@ -34,8 +34,7 @@ namespace Auth.API.Infrastructure.Persistence.Mapping
                 {
                     cm.AutoMap();
                     cm.MapIdProperty(u => u.Id); // Define explicitamente qual campo é a Chave Primária
-                    cm.MapMember(u => u.CellId)
-                    .SetIsRequired(true);
+
 
                 });
             }

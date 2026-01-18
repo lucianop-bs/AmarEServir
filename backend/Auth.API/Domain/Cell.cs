@@ -25,6 +25,7 @@ namespace Auth.API.Domain
             Users.Add(membro);
         }
 
+
         public Result Validate()
         {
             var resultValidation = ResultValidation.ValidateCollectErrors(
@@ -43,7 +44,7 @@ namespace Auth.API.Domain
             return Result.Ok();
         }
 
-        public Result Update(string name, Guid? leaderId, User membro)
+        public Cell Update(string name, Guid? leaderId, User membro)
         {
             if (!string.IsNullOrWhiteSpace(Name))
             {
@@ -52,7 +53,7 @@ namespace Auth.API.Domain
             if (leaderId != Guid.Empty || leaderId is not null)
             {
 
-                if (Users.Any(u => u.Id == leaderId))
+                if (Users.Any(u => u.Id != leaderId))
 
                 {
                     Users.RemoveAt(Users.FindIndex(u => u.Id == LeaderId));
@@ -63,7 +64,7 @@ namespace Auth.API.Domain
                 }
             }
 
-            return Result.Ok();
+            return this;
 
         }
     }
