@@ -28,7 +28,7 @@ namespace Auth.API.Infrastructure.Persistence.Repositories
             await _collection.DeleteOneAsync(c => c.Id == id);
         }
 
-        public async Task<Cell> GetCellByGuid(Guid id)
+        public async Task<Cell> GetCellByGuid(Guid? id)
         {
             return await _collection.Find(c => c.Id == id).FirstOrDefaultAsync();
         }

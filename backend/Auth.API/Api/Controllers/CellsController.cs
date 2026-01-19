@@ -28,7 +28,17 @@ namespace Auth.API.Api.Controllers
         {
             var result = await _mediator.Send(command);
 
-            return CreatedAtRoute("GetCellByGuid", new { id = result.IsSuccess ? result.Value.Id : Guid.Empty }, result));
+            return CreatedAtRoute("GetCellByGuid", new { id = result.IsSuccess ? result.Value.Id : Guid.Empty }, result);
+        }
+
+        [HttpPatch("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> UpdateCell([FromRoute] Guid? id, [FromBody] UpdateCellRequest command)
+        {
+            var result = await _mediator.Send(new UpdateCellCommand(id, command.Name, command.LiderId));
+
+            return result.ToApiResult().ToActionResult();
         }
 
         [HttpGet("{id}", Name = "GetCellByGuid")]
@@ -37,16 +47,6 @@ namespace Auth.API.Api.Controllers
         public async Task<IActionResult> GetCell(Guid id)
         {
             var result = await _mediator.Send(new GetCellByGuidQuery(id));
-
-            return result.ToApiResult().ToActionResult();
-        }
-
-        [HttpPatch("{id}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> UpdateCell([FromRoute] Guid id, [FromBody] UpdateCellRequest command)
-        {
-            var result = await _mediator.Send(new UpdateCellCommand(id, command.Name, command.LiderId));
 
             return result.ToApiResult().ToActionResult();
         }

@@ -1,7 +1,7 @@
 ﻿using AmarEServir.Core.Results.Base;
 using Auth.API.Application.Users.Models;
-using Auth.API.Domain;
 using Auth.API.Domain.Contracts;
+using Auth.API.Domain.Errors;
 using MediatR;
 
 namespace Auth.API.Application.Users.GetUserByGuid
@@ -25,7 +25,7 @@ namespace Auth.API.Application.Users.GetUserByGuid
 
             if (user is null)
             {
-                return Result<UserModelView>.Fail(UserError.NotFound);
+                return Result<UserModelView>.Fail(UserErrors.Account.NotFound);
 
             }
             return Result<UserModelView>.Ok(user.ToModelUserView());

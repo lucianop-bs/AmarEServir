@@ -1,4 +1,5 @@
 ﻿using Auth.API.Domain;
+using Auth.API.Domain.Enums;
 
 namespace Auth.API.Application.Users.Models
 {

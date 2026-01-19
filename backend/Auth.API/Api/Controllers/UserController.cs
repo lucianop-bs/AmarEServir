@@ -1,5 +1,6 @@
 ﻿using AmarEServir.Core.Results.Extensions;
 using Auth.API.Application.Users.CreateUser;
+using Auth.API.Application.Users.DeleteUser;
 using Auth.API.Application.Users.GetUserByGuid;
 using Auth.API.Application.Users.Models;
 using Auth.API.Application.Users.UpdateUser;
@@ -17,16 +18,6 @@ namespace Auth.API.Api.Controllers
         public UserController(IMediator mediator)
         {
             _mediator = mediator;
-        }
-
-        [HttpGet("{id}")]
-        [ProducesResponseType(typeof(UserModelView), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetUser(Guid id)
-        {
-            var result = await _mediator.Send(new GetUserByGuidQuery(id));
-
-            return result.ToApiResult().ToActionResult();
         }
 
         [HttpPost]
@@ -47,6 +38,26 @@ namespace Auth.API.Api.Controllers
         public async Task<IActionResult> UpdateUser([FromRoute] Guid id, [FromBody] UpdateUserRequest request)
         {
             var result = await _mediator.Send(new UpdateUserCommand(id, request));
+
+            return result.ToApiResult().ToActionResult();
+        }
+
+        [HttpGet("{id}")]
+        [ProducesResponseType(typeof(UserModelView), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetUser(Guid id)
+        {
+            var result = await _mediator.Send(new GetUserByGuidQuery(id));
+
+            return result.ToApiResult().ToActionResult();
+        }
+
+        [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> DeleteUser([FromRoute] Guid id)
+        {
+            var result = await _mediator.Send(new DeleteUserCommand(id));
 
             return result.ToApiResult().ToActionResult();
         }

@@ -1,6 +1,8 @@
 ﻿using AmarEServir.Core.Entities;
 using AmarEServir.Core.Results.Base;
 using AmarEServir.Core.Results.Extensions;
+using Auth.API.Domain.Enums;
+using Auth.API.Domain.Errors;
 
 namespace Auth.API.Domain
 {
@@ -37,40 +39,55 @@ namespace Auth.API.Domain
         public Result Validate()
         {
             var resultValidation = ResultValidation.ValidateCollectErrors(
-                () => string.IsNullOrWhiteSpace(Name)
-                ? Result.Fail(UserError.NameRequired)
-                : Name.Length < 3 || Name.Length > 50
-                ? Result.Fail(UserError.NameLength)
-                : Result.Ok(),
 
-                () => string.IsNullOrWhiteSpace(Email) || !Email.Contains('@')
-                ? Result.Fail(UserError.InvalidEmail)
-                : Result.Ok(),
+                () => string.IsNullOrWhiteSpace(Name)
+                    ? Result.Fail(UserErrors.Profile.NameRequired)
+                    : Result.Ok(),
 
                 () => string.IsNullOrWhiteSpace(Phone)
-               ? Result.Fail(UserError.PhoneRequired)
-               : Phone.Length > 13 || Phone.Length < 11
-               ? Result.Fail(UserError.PhoneInvalid)
-               : Result.Ok(),
+                    ? Result.Fail(UserErrors.Profile.PhoneRequired)
+                    : Result.Ok(),
 
-                 () => string.IsNullOrWhiteSpace(Password) || Password.Length <= 6
-               ? Result.Fail(UserError.WeakPassword)
-               : Result.Ok(),
+                // Validações de Conta (Account)
+                () => string.IsNullOrWhiteSpace(Email)
+                    ? Result.Fail(UserErrors.Account.EmailRequired)
+                    : Result.Ok(),
 
-               () => !Enum.IsDefined(Role)
-               ? Result.Fail(UserError.RoleInvalid)
-               : Result.Ok(),
+                () => string.IsNullOrWhiteSpace(Password)
+                    ? Result.Fail(UserErrors.Account.PasswordRequired)
+                    : Result.Ok(),
 
-               () => Address == null
-               ? Result.Fail(UserError.AddressRequired)
-               : Address.Validate()
-               );
+                () => !Enum.IsDefined(Role)
+                    ? Result.Fail(UserErrors.Account.RoleInvalid)
+                    : Result.Ok(),
+
+                () => Address == null
+                    ? Result.Fail(UserErrors.Address.AddressRequired)
+                    : Address.Validate()
+            );
 
             if (!resultValidation.IsSuccess)
                 return Result.Fail(resultValidation.Errors);
 
             return Result.Ok();
+        }
 
+        public void UserUpdate(string? name, string? email, string? phone, string? password, Address? address, UserRole? role)
+        {
+            if (!string.IsNullOrWhiteSpace(name))
+                Name = name;
+            if (!string.IsNullOrWhiteSpace(email))
+                Email = email;
+            if (!string.IsNullOrWhiteSpace(phone))
+                Phone = phone;
+            if (!string.IsNullOrWhiteSpace(password))
+                Password = password;
+            if (address != null)
+                Address = address;
+            if (role != null)
+                Role = role.Value;
+
+            SetUpdatedAtDate(DateTime.UtcNow);
         }
     }
 }

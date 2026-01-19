@@ -1,5 +1,8 @@
 ﻿using AmarEServir.Core.Filters;
 using AmarEServir.Core.Middlewares;
+using Auth.API.Application.Common;
+using FluentValidation;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Scalar.AspNetCore;
 
@@ -8,10 +11,16 @@ namespace Auth.API.Api.Configurations
     public static class ApiConfig
     {
         public static WebApplicationBuilder ConfigureApplicationServices(this WebApplicationBuilder builder)
-        {
-            builder.Services.AddMediatR(cfg =>
-            {
 
+        {
+            var assembly = typeof(ValidationBehavior<,>).Assembly;
+            builder.Services.AddValidatorsFromAssembly(assembly);
+
+            builder.Services.AddMediatR(cfg =>
+
+            {
+                cfg.RegisterServicesFromAssembly(typeof(ValidationBehavior<,>).Assembly);
+                cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
                 cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
 
             });
