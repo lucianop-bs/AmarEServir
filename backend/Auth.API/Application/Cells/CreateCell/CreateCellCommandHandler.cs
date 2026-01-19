@@ -2,6 +2,8 @@
 using Auth.API.Application.Cells.Models;
 using Auth.API.Domain;
 using Auth.API.Domain.Contracts;
+using Auth.API.Domain.Enums;
+using Auth.API.Domain.Errors;
 using MediatR;
 
 namespace Auth.API.Application.Cells.CreateCell
@@ -25,10 +27,10 @@ namespace Auth.API.Application.Cells.CreateCell
 
             if (user is null)
             {
-                return Result<CellModelView>.Fail(UserError.NotFound);
+                return Result<CellModelView>.Fail(UserErrors.Account.NotFound);
             }
 
-            var userLeaderValidation = IsLeader(user, request.LeaderId);
+            var userLeaderValidation = IsLeader(user);
 
             if (!userLeaderValidation.IsSuccess)
             {

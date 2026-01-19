@@ -1,6 +1,6 @@
 ﻿using AmarEServir.Core.Results.Base;
-using Auth.API.Domain;
 using Auth.API.Domain.Contracts;
+using Auth.API.Domain.Errors;
 using MediatR;
 
 namespace Auth.API.Application.Cells.UpdateCell
@@ -22,24 +22,26 @@ namespace Auth.API.Application.Cells.UpdateCell
         public async Task<Result> Handle(UpdateCellCommand request, CancellationToken cancellationToken)
         {
             var cell = await _cellRepository.GetCellByGuid(request.Id);
-            var usuario = await _userRepository.GetUserByGuid(request.LiderId);
-
-            if (usuario is null)
-            {
-                return Result.Fail(UserError.NotFound);
-            }
             if (cell is null)
             {
                 return Result.Fail(CellError.NotFound);
             }
+            var usuario = await _userRepository.GetUserByGuid(request.LiderId);
 
-            var cellUpdate = cell.Update(request.Name, request.LiderId, usuario);
-
-            if (!cellUpdate.IsSuccess)
+            if (usuario is null)
             {
-                return Result.Fail(cellUpdate.Errors);
+                return Result.Fail(UserErrors.Account.NotFound);
             }
-            await _cellRepository.Update(cellUpdate.Value);
+
+            cell.Update(request.Name, request.LiderId, usuario);
+
+
+            var validationResult = cell.Validate();
+            if (!validationResult.IsSuccess)
+                return validationResult;
+
+            await _cellRepository.Update(cell);
+
             return Result.Ok();
 
         }

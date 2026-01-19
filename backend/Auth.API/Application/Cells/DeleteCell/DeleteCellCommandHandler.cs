@@ -1,6 +1,6 @@
 ﻿using AmarEServir.Core.Results.Base;
-using Auth.API.Domain;
 using Auth.API.Domain.Contracts;
+using Auth.API.Domain.Errors;
 using MediatR;
 
 namespace Auth.API.Application.Cells.DeleteCell

@@ -1,13 +1,14 @@
 ﻿using AmarEServir.Core.Entities;
 using AmarEServir.Core.Results.Base;
 using AmarEServir.Core.Results.Extensions;
+using Auth.API.Domain.Errors;
 
 namespace Auth.API.Domain
 {
     public class Cell : BaseEntity<Guid>
     {
         public string Name { get; private set; }
-        public Guid? LeaderId { get; private set; }
+        public Guid LeaderId { get; private set; }
         public User Lider { get; private set; }
         public List<User> Members { get; private set; } = [];
 
@@ -32,7 +33,7 @@ namespace Auth.API.Domain
                 ? Result.Fail(CellError.InvalidName)
                 : Result.Ok(),
 
-                () => LeaderId == Guid.Empty || LeaderId is null
+                () => LeaderId == Guid.Empty
                 ? Result.Fail(CellError.LeaderRequired)
                 : Result.Ok()
                 );
@@ -43,41 +44,38 @@ namespace Auth.API.Domain
             return Result.Ok();
         }
 
-        public Result<Cell> Update(string name, Guid? leaderId, User member)
+        public void Update(string name, Guid leaderId, User member)
         {
-            if (!string.IsNullOrWhiteSpace(name))
-            {
-                Name = name;
-            }
-            if (leaderId.HasValue && leaderId.Value != Guid.Empty)
-            {
-                if (member is null) return Result<Cell>.Fail(CellError.NotFound);
 
-                if (LeaderId != leaderId)
-                {
-                    var index = Members.FindIndex(getMember => getMember.Id == LeaderId);
-                    if (index != -1)
-                    {
-                        Members.RemoveAt(index);
+            if (!string.IsNullOrWhiteSpace(name)) Name = name;
 
-                    }
-                }
+
+            if (LeaderId != leaderId)
+            {
+
+                RemoveMemberById(LeaderId);
                 LeaderId = leaderId;
-                if (!Members.Any(getMember => getMember.Id == member.Id))
+                AddMember(member);
 
-                {
-
-                    Members.Add(member);
-                }
             }
             SetUpdatedAtDate(DateTime.UtcNow);
-            var validation = Validate();
+        }
 
-            if (!validation.IsSuccess)
-                return Result<Cell>.Fail(validation.Errors);
+        private void AddMember(User member)
+        {
+            if (member != null && !Members.Any(m => m.Id == member.Id))
+            {
+                Members.Add(member);
+            }
+        }
 
-            return Result<Cell>.Ok(this);
-
+        private void RemoveMemberById(Guid memberId)
+        {
+            var member = Members.FirstOrDefault(m => m.Id == memberId);
+            if (member != null)
+            {
+                Members.Remove(member);
+            }
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace Auth.API.Application.Cells.UpdateCell
+﻿using Auth.API.Application.Cells.UpdateCell;
+
+namespace Auth.API.Application.Cells.Models
 {
     public record class UpdateCellInputModel(string Name, Guid LiderId);
 
