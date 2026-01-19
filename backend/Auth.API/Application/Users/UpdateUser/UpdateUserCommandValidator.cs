@@ -45,7 +45,8 @@ public class UpdateUserRequestValidator : AbstractValidator<UpdateUserRequest>
                 .WithMessage(UserErrors.Account.IdRequired.Message);
 
             RuleFor(x => x.User)
-                .NotNull().WithMessage("Os dados de atualização não foram informados.")
+                .NotNull().WithMessage(UserErrors.Account.UpdateAccountRequired.Message)
+                .WithErrorCode(UserErrors.Account.UpdateAccountRequired.Code)
                 .SetValidator(new UpdateUserRequestValidator());
         }
     }

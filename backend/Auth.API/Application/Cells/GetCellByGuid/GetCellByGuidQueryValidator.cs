@@ -3,10 +3,10 @@ using FluentValidation;
 
 namespace Auth.API.Application.Cells.GetCellByGuid
 {
-    public class GetUserByGuidQueryValidator : AbstractValidator<GetCellByGuidQuery>
+    public class GetCellByGuidQueryValidator : AbstractValidator<GetCellByGuidQuery>
     {
 
-        public GetUserByGuidQueryValidator()
+        public GetCellByGuidQueryValidator()
         {
             RuleFor(x => x.Id)
                 .NotEmpty().WithMessage(CellError.IdRequired.Message)

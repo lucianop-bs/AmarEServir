@@ -18,6 +18,7 @@ public static class UserErrors
         public static Error InvalidForRole => new("User.InvalidForRole", "Você não é líder de nenhuma célula.", ErrorType.Validation);
         public static Error NotFound => new("User.NotFound", "Usuário não encontrado.", ErrorType.NotFound);
         public static Error IdRequired => new("User.IdRequired", "O ID do usuário é obrigatório.", ErrorType.Validation);
+        public static Error UpdateAccountRequired => new("User.UpdateAccountRequired", "Os dados de atualização não foram informados.", ErrorType.Validation);
 
     }
 
