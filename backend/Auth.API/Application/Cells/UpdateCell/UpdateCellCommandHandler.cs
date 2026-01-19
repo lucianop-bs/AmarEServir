@@ -35,6 +35,9 @@ namespace Auth.API.Application.Cells.UpdateCell
 
             cell.Update(request.Name, request.LiderId, usuario);
 
+            cell.Validate();
+
+
             await _cellRepository.Update(cell);
             return Result.Ok();
 

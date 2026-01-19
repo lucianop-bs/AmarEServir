@@ -13,15 +13,15 @@ namespace Auth.API.Api.Configurations
         public static WebApplicationBuilder ConfigureApplicationServices(this WebApplicationBuilder builder)
 
         {
-            var assembly = typeof(ValidationBehavior<,>).Assembly;
-            builder.Services.AddValidatorsFromAssembly(assembly);
+            var applicationAssembly = typeof(Program).Assembly;
+            builder.Services.AddValidatorsFromAssembly(applicationAssembly);
 
             builder.Services.AddMediatR(cfg =>
 
             {
-                cfg.RegisterServicesFromAssembly(typeof(ValidationBehavior<,>).Assembly);
+                cfg.RegisterServicesFromAssembly(applicationAssembly);
                 cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
-                cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
+               
 
             });
 

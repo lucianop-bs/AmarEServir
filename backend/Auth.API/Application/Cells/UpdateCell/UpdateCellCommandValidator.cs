@@ -3,10 +3,10 @@ using FluentValidation;
 
 namespace Auth.API.Application.Cells.UpdateCell
 {
-    public class CreateCellCommandValidator : AbstractValidator<UpdateCellCommand>
+    public class UpdateUserCommandValidator : AbstractValidator<UpdateCellCommand>
     {
 
-        public CreateCellCommandValidator()
+        public UpdateUserCommandValidator()
         {
             RuleFor(x => x.Id)
                .NotEmpty().WithMessage(CellError.IdRequired.Message)

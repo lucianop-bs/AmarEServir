@@ -31,9 +31,9 @@ namespace Auth.API.Application.Users.UpdateUser
                 request.User.Address,
                 request.User.Role);
 
-            var validationResult = user.Validate();
-            if (!validationResult.IsSuccess)
-                return validationResult;
+            var validationUser = user.Validate();
+            if (!validationUser.IsSuccess)
+                return validationUser;
 
             await _userRepository.Update(user);
 

@@ -7,7 +7,7 @@ namespace Auth.API.Domain.Contracts
         Task Create(IClientSessionHandle session, Cell cell);
         Task Update(Cell cell);
         Task Delete(Guid id);
-        Task<Cell> GetCellByGuid(Guid? id);
+        Task<Cell> GetCellByGuid(Guid id);
         Task Create(Cell cell);
 
     }

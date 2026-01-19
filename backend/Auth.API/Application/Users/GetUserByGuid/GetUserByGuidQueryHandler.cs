@@ -21,7 +21,7 @@ namespace Auth.API.Application.Users.GetUserByGuid
 
         public async Task<Result<UserModelView>> Handle(GetUserByGuidQuery request, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetUserByGuid(request.id);
+            var user = await _userRepository.GetUserByGuid(request.Id);
 
             if (user is null)
             {

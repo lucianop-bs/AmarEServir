@@ -3,16 +3,15 @@ using FluentValidation;
 
 namespace Auth.API.Application.Cells.GetCellByGuid
 {
-    public class DeleteCellCommandValidator : AbstractValidator<GetCellByGuidQuery>
+    public class GetUserByGuidQueryValidator : AbstractValidator<GetCellByGuidQuery>
     {
 
-        public DeleteCellCommandValidator()
+        public GetUserByGuidQueryValidator()
         {
             RuleFor(x => x.Id)
                 .NotEmpty().WithMessage(CellError.IdRequired.Message)
-                .WithErrorCode(CellError.IdRequired.Code)
-                .NotNull().WithMessage(CellError.IdRequired.Message)
                 .WithErrorCode(CellError.IdRequired.Code);
+             
         }
     }
 }

@@ -34,7 +34,7 @@ namespace Auth.API.Api.Controllers
         [HttpPatch("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> UpdateCell([FromRoute] Guid? id, [FromBody] UpdateCellRequest command)
+        public async Task<IActionResult> UpdateCell([FromRoute] Guid id, [FromBody] UpdateCellRequest command)
         {
             var result = await _mediator.Send(new UpdateCellCommand(id, command.Name, command.LiderId));
 
