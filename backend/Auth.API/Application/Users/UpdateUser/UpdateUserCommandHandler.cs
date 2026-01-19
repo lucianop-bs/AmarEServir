@@ -27,7 +27,6 @@ namespace Auth.API.Application.Users.UpdateUser
                 request.User.Name,
                 request.User.Email,
                 request.User.Phone,
-                request.User.Password,
                 request.User.Address,
                 request.User.Role);
 

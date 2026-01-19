@@ -72,7 +72,7 @@ namespace Auth.API.Domain
             return Result.Ok();
         }
 
-        public void UserUpdate(string? name, string? email, string? phone, string? password, Address? address, UserRole? role)
+        public void UserUpdate(string? name, string? email, string? phone, Address? address, UserRole? role)
         {
             if (!string.IsNullOrWhiteSpace(name))
                 Name = name;
@@ -80,8 +80,6 @@ namespace Auth.API.Domain
                 Email = email;
             if (!string.IsNullOrWhiteSpace(phone))
                 Phone = phone;
-            if (!string.IsNullOrWhiteSpace(password))
-                Password = password;
             if (address != null)
                 Address = address;
             if (role != null)

@@ -26,12 +26,6 @@ public class UpdateUserRequestValidator : AbstractValidator<UpdateUserRequest>
             .Length(11, 13).WithErrorCode(UserErrors.Profile.PhoneInvalid.Code)
             .WithMessage(UserErrors.Profile.PhoneInvalid.Message);
 
-        RuleFor(x => x.Password)
-            .NotEmpty().WithErrorCode(UserErrors.Account.PasswordRequired.Code)
-            .WithMessage(UserErrors.Account.PasswordRequired.Message)
-            .MinimumLength(6).WithErrorCode(UserErrors.Account.WeakPassword.Code)
-            .WithMessage(UserErrors.Account.WeakPassword.Message);
-
         RuleFor(x => x.Role)
             .IsInEnum().WithErrorCode(UserErrors.Account.RoleInvalid.Code)
             .WithMessage(UserErrors.Account.RoleInvalid.Message);
@@ -45,13 +39,6 @@ public class UpdateUserRequestValidator : AbstractValidator<UpdateUserRequest>
     {
         public UpdateUserCommandValidator()
         {
-<<<<<<< HEAD
-=======
-          
-            RuleFor(x => x.Id)
-                .NotEmpty().WithErrorCode(UserErrors.Account.IdRequired.Code)
-                .WithMessage(UserErrors.Account.IdRequired.Message);
->>>>>>> a208f52ad21eb976f79e0dff1d708f3347d92cd9
 
             RuleFor(x => x.Id)
                 .NotEmpty().WithErrorCode(UserErrors.Account.IdRequired.Code)

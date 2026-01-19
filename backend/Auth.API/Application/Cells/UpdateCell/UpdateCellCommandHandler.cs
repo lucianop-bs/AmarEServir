@@ -35,10 +35,7 @@ namespace Auth.API.Application.Cells.UpdateCell
 
             cell.Update(request.Name, request.LiderId, usuario);
 
-<<<<<<< HEAD
-=======
-         
->>>>>>> a208f52ad21eb976f79e0dff1d708f3347d92cd9
+
             var validationResult = cell.Validate();
             if (!validationResult.IsSuccess)
                 return validationResult;

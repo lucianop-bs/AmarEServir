@@ -47,7 +47,8 @@ namespace Auth.API.Domain
         public void Update(string name, Guid leaderId, User member)
         {
 
-            Name = name;
+            if (!string.IsNullOrWhiteSpace(name)) Name = name;
+
 
             if (LeaderId != leaderId)
             {
