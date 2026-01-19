@@ -7,7 +7,11 @@ public class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>
 {
     public CreateUserCommandValidator()
     {
+<<<<<<< HEAD
 
+=======
+       
+>>>>>>> a208f52ad21eb976f79e0dff1d708f3347d92cd9
         RuleFor(x => x.Name)
             .NotEmpty().WithErrorCode(UserErrors.Profile.NameRequired.Code)
             .WithMessage(UserErrors.Profile.NameRequired.Message)
@@ -20,6 +24,10 @@ public class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>
             .Length(11, 13).WithErrorCode(UserErrors.Profile.PhoneInvalid.Code)
             .WithMessage(UserErrors.Profile.PhoneInvalid.Message);
 
+<<<<<<< HEAD
+=======
+       
+>>>>>>> a208f52ad21eb976f79e0dff1d708f3347d92cd9
         RuleFor(x => x.Email)
             .NotEmpty().WithErrorCode(UserErrors.Account.EmailRequired.Code)
             .WithMessage(UserErrors.Account.EmailRequired.Message)
@@ -36,6 +44,10 @@ public class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>
             .IsInEnum().WithErrorCode(UserErrors.Account.RoleInvalid.Code)
             .WithMessage(UserErrors.Account.RoleInvalid.Message);
 
+<<<<<<< HEAD
+=======
+        
+>>>>>>> a208f52ad21eb976f79e0dff1d708f3347d92cd9
         RuleFor(x => x.Address)
             .NotNull().WithErrorCode(UserErrors.Address.AddressRequired.Code)
             .WithMessage(UserErrors.Address.AddressRequired.Message)

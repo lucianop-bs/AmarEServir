@@ -45,6 +45,13 @@ public class UpdateUserRequestValidator : AbstractValidator<UpdateUserRequest>
     {
         public UpdateUserCommandValidator()
         {
+<<<<<<< HEAD
+=======
+          
+            RuleFor(x => x.Id)
+                .NotEmpty().WithErrorCode(UserErrors.Account.IdRequired.Code)
+                .WithMessage(UserErrors.Account.IdRequired.Message);
+>>>>>>> a208f52ad21eb976f79e0dff1d708f3347d92cd9
 
             RuleFor(x => x.Id)
                 .NotEmpty().WithErrorCode(UserErrors.Account.IdRequired.Code)
