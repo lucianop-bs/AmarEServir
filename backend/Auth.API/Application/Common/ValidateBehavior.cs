@@ -28,13 +28,11 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
             return await next();
         }
 
-
         var context = new ValidationContext<TRequest>(request);
 
         var validationResults = await Task.WhenAll(
             _validators.Select(v => v.ValidateAsync(context, cancellationToken))
         );
-
 
         var failures = validationResults
             .SelectMany(r => r.Errors)
@@ -51,12 +49,10 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
                     ErrorType.Validation))
                 .ToList();
 
-
             if (typeof(TResponse) == typeof(Result))
             {
                 return (Result.Fail(errors) as TResponse)!;
             }
-
 
             if (typeof(TResponse).IsGenericType && typeof(TResponse).GetGenericTypeDefinition() == typeof(Result<>))
             {
@@ -66,8 +62,9 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
                     nameof(Result.Fail),
                     BindingFlags.Public | BindingFlags.Static,
                     null,
-                    new Type[] { typeof(IEnumerable<Error>) },
+                    new Type[] { typeof(IEnumerable<IError>) },
                     null
+
                 );
 
                 if (failMethod != null)
@@ -79,11 +76,9 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
                 }
             }
 
-
             throw new InvalidOperationException(
                 $"O comando {typeof(TRequest).Name} precisa retornar Result ou Result<T> para usar validação automática.");
         }
-
 
         return await next();
     }

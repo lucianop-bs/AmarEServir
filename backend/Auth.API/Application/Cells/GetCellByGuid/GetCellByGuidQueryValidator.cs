@@ -11,7 +11,7 @@ namespace Auth.API.Application.Cells.GetCellByGuid
             RuleFor(x => x.Id)
                 .NotEmpty().WithMessage(CellError.IdRequired.Message)
                 .WithErrorCode(CellError.IdRequired.Code);
-             
+
         }
     }
 }

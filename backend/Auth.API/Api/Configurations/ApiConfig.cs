@@ -21,7 +21,6 @@ namespace Auth.API.Api.Configurations
             {
                 cfg.RegisterServicesFromAssembly(applicationAssembly);
                 cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
-               
 
             });
 

@@ -9,10 +9,9 @@ namespace Auth.API.Application.Users.DeleteUser
         public DeleteUserCommandValidator()
         {
             RuleFor(x => x.Id)
-                .NotEmpty().WithMessage(CellError.IdRequired.Message)
-                .WithErrorCode(CellError.IdRequired.Code)
-                .NotNull().WithMessage(CellError.IdRequired.Message)
-                .WithErrorCode(CellError.IdRequired.Code);
+                .NotEmpty().WithMessage(UserErrors.Account.IdRequired.Message)
+                .WithErrorCode(UserErrors.Account.IdRequired.Code);
+
         }
     }
 }

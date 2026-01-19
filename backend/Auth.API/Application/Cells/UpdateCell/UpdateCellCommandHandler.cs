@@ -35,10 +35,12 @@ namespace Auth.API.Application.Cells.UpdateCell
 
             cell.Update(request.Name, request.LiderId, usuario);
 
-            cell.Validate();
-
+            var validationResult = cell.Validate();
+            if (!validationResult.IsSuccess)
+                return validationResult;
 
             await _cellRepository.Update(cell);
+
             return Result.Ok();
 
         }

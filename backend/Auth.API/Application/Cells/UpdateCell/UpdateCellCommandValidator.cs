@@ -3,15 +3,13 @@ using FluentValidation;
 
 namespace Auth.API.Application.Cells.UpdateCell
 {
-    public class UpdateUserCommandValidator : AbstractValidator<UpdateCellCommand>
+    public class UpdateCellCommandValidator : AbstractValidator<UpdateCellCommand>
     {
 
-        public UpdateUserCommandValidator()
+        public UpdateCellCommandValidator()
         {
             RuleFor(x => x.Id)
                .NotEmpty().WithMessage(CellError.IdRequired.Message)
-               .WithErrorCode(CellError.IdRequired.Code)
-               .NotNull().WithMessage(CellError.IdRequired.Message)
                .WithErrorCode(CellError.IdRequired.Code);
 
             RuleFor(x => x.Name)
