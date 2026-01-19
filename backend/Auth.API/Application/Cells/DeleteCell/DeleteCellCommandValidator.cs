@@ -10,8 +10,6 @@ namespace Auth.API.Application.Cells.DeleteCell
         {
             RuleFor(x => x.Id)
                 .NotEmpty().WithMessage(CellError.IdRequired.Message)
-                .WithErrorCode(CellError.IdRequired.Code)
-                .NotNull().WithMessage(CellError.IdRequired.Message)
                 .WithErrorCode(CellError.IdRequired.Code);
         }
     }

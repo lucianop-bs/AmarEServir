@@ -10,9 +10,8 @@ namespace Auth.API.Application.Users.DeleteUser
         {
             RuleFor(x => x.Id)
                 .NotEmpty().WithMessage(CellError.IdRequired.Message)
-                .WithErrorCode(CellError.IdRequired.Code)
-                .NotNull().WithMessage(CellError.IdRequired.Message)
                 .WithErrorCode(CellError.IdRequired.Code);
+          
         }
     }
 }
