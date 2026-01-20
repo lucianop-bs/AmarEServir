@@ -46,7 +46,6 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
                     ErrorType.Validation))
                 .ToList();
 
-        
             if (typeof(TResponse) == typeof(Result))
             {
                 return (Result.Fail(errors) as TResponse)!;
@@ -56,14 +55,13 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
             {
                 var resultValueType = typeof(TResponse).GetGenericArguments()[0];
 
-                
                 var failMethod = typeof(Result)
                     .GetMethods(BindingFlags.Public | BindingFlags.Static)
                     .FirstOrDefault(m =>
                         m.Name == nameof(Result.Fail) &&
                         m.IsGenericMethod &&
                         m.GetParameters().Length == 1 &&
-                       
+
                         m.GetParameters()[0].ParameterType.IsAssignableFrom(typeof(List<Error>))
                     );
 
@@ -74,11 +72,9 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
                     return (result as TResponse)!;
                 }
 
-               
-                throw new InvalidOperationException($"Não foi possível mapear o método Result.Fail para o tipo {resultValueType.Name}. Verifique a assinatura na biblioteca Core.");
+                throw new InvalidOperationException($"O comando {typeof(TRequest).Name} precisa retornar Result ou Result<T> para usar a validação automática.");
             }
 
-            
             throw new InvalidOperationException("Comando com erro de validação não retorna um tipo Result suportado.");
         }
 

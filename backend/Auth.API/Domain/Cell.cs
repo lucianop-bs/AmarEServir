@@ -1,6 +1,7 @@
 ﻿using AmarEServir.Core.Entities;
 using AmarEServir.Core.Results.Base;
 using AmarEServir.Core.Results.Extensions;
+using Auth.API.Domain.Enums;
 using Auth.API.Domain.Errors;
 
 namespace Auth.API.Domain
@@ -8,7 +9,7 @@ namespace Auth.API.Domain
     public class Cell : BaseEntity<Guid>
     {
         public string Name { get; private set; }
-        public Guid LeaderId { get; private set; }
+        public Guid? LeaderId { get; private set; }
         public User Lider { get; private set; }
         public List<User> Members { get; private set; } = [];
 
@@ -29,8 +30,8 @@ namespace Auth.API.Domain
         public Result Validate()
         {
             var resultValidation = ResultValidation.ValidateCollectErrors(
-                () => string.IsNullOrWhiteSpace(Name) || Name.Length < 4 || Name.Length > 50
-                ? Result.Fail(CellError.InvalidName)
+                () => string.IsNullOrWhiteSpace(Name)
+                ? Result.Fail(CellError.NameRequired)
                 : Result.Ok(),
 
                 () => LeaderId == Guid.Empty
@@ -44,10 +45,32 @@ namespace Auth.API.Domain
             return Result.Ok();
         }
 
-        public void Update(string name, Guid leaderId, User member)
+        public static Result<Cell> Create(string name, User user)
+        {
+            if (user.Role != UserRole.Leader)
+            {
+                return Result<Cell>.Fail(CellError.LeaderRequired);
+            }
+
+            return Result<Cell>.Ok(new Cell(
+                name: name,
+                leaderId: user.Id,
+                membro: user
+            ));
+
+        }
+        public Result Update(string name, Guid? leaderId, User member)
         {
 
-            if (!string.IsNullOrWhiteSpace(name)) Name = name;
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return Result.Fail(CellError.NameRequired);
+            }
+
+            if (member.Role != UserRole.Leader)
+            {
+                return Result.Fail(CellError.LeaderRequired);
+            }
 
             if (LeaderId != leaderId)
             {
@@ -57,7 +80,11 @@ namespace Auth.API.Domain
                 AddMember(member);
 
             }
+
+            Name = name;
             SetUpdatedAtDate(DateTime.UtcNow);
+
+            return Validate();
         }
 
         private void AddMember(User member)
@@ -68,7 +95,7 @@ namespace Auth.API.Domain
             }
         }
 
-        private void RemoveMemberById(Guid memberId)
+        private void RemoveMemberById(Guid? memberId)
         {
             var member = Members.FirstOrDefault(m => m.Id == memberId);
             if (member != null)

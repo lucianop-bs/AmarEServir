@@ -361,7 +361,7 @@ dotnet run
 | `email` | Obrigatório, formato válido |
 | `phone` | Obrigatório, 11-13 caracteres |
 | `password` | Obrigatório, mínimo 6 caracteres |
-| `role` | Enum válido (1=Admin, 2=Leader, 3=Volunteer, 4=Beneficiary) |
+| `role` | Enum válido (1=Admin, 2=Leader, 3=Volunteer, 4=Beneficiary) ou ("Admin", "Leader", "Volunteer", "Beneficiary") |
 | `address` | Obrigatório (rua, numero, bairro, cidade, estado, cep) |
 
 ### Célula
@@ -487,7 +487,7 @@ Content-Type: application/json
 
 {
   "name": "Célula Renovada",
-  "liderId": "770e8400-e29b-41d4-a716-446655440002"
+  "leaderId": "770e8400-e29b-41d4-a716-446655440002"
 }
 ```
 

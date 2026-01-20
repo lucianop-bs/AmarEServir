@@ -33,9 +33,29 @@ namespace Auth.API.Infrastructure.Persistence.Repositories
             return await _collection.Find(c => c.Id == id).FirstOrDefaultAsync();
         }
 
+        public Task<bool> LeaderExists(Guid leader)
+        {
+            return _collection.Find(c => c.LeaderId == leader).AnyAsync();
+        }
+
+        public Task<bool> NameAlreadyExist(string name)
+        {
+            return _collection.Find(c => c.Name == name).AnyAsync();
+        }
+
         public async Task Update(Cell cell)
         {
             await _collection.ReplaceOneAsync(c => c.Id == cell.Id, cell);
+        }
+
+        public Task<bool> NameExistsForAnotherCell(string name, Guid? currentUserId)
+        {
+            return _collection.Find(u => u.Name == name && u.Id != currentUserId).AnyAsync();
+        }
+
+        public Task<bool> LeaderExistsForAnotherCell(Guid? leaderId, Guid currentCellId)
+        {
+            return _collection.Find(c => c.LeaderId == leaderId && c.Id != currentCellId).AnyAsync();
         }
     }
 }

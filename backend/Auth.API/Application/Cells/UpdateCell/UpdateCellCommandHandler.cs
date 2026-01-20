@@ -21,11 +21,14 @@ namespace Auth.API.Application.Cells.UpdateCell
 
         public async Task<Result> Handle(UpdateCellCommand request, CancellationToken cancellationToken)
         {
+
             var cell = await _cellRepository.GetCellByGuid(request.Id);
+
             if (cell is null)
             {
                 return Result.Fail(CellError.NotFound);
             }
+
             var usuario = await _userRepository.GetUserByGuid(request.LiderId);
 
             if (usuario is null)
@@ -33,9 +36,21 @@ namespace Auth.API.Application.Cells.UpdateCell
                 return Result.Fail(UserErrors.Account.NotFound);
             }
 
-            cell.Update(request.Name, request.LiderId, usuario);
+            if (cell.LeaderId != request.LiderId)
+            {
+                if (await _cellRepository.LeaderExistsForAnotherCell(request.LiderId, request.Id))
+                {
+                    return Result.Fail(CellError.AlreadyLeadingCell);
+                }
+            }
+            if (cell.Name != request.Name)
+            {
+                if (await _cellRepository.NameExistsForAnotherCell(request.Name, request.Id))
+                    return Result.Fail(CellError.NameAlreadyExists);
+            }
 
-            var validationResult = cell.Validate();
+            var validationResult = cell.Update(request.Name, request.LiderId, usuario);
+
             if (!validationResult.IsSuccess)
                 return validationResult;
 
