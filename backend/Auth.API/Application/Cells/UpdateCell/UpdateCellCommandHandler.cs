@@ -29,31 +29,38 @@ namespace Auth.API.Application.Cells.UpdateCell
                 return Result.Fail(CellError.NotFound);
             }
 
-            var usuario = await _userRepository.GetUserByGuid(request.LiderId);
+            if (!string.IsNullOrWhiteSpace(request.Name) && request.Name != cell.Name)
+            {
+                if (await _cellRepository.NameExistsForAnotherCell(request.Name, request.Id))
+                    return Result.Fail(CellError.NameAlreadyExists);
+            }
 
-            if (usuario is null)
+            var leaderIdRequest = request.LeaderId ?? cell.LeaderId;
+
+            var user = await _userRepository.GetUserByGuid(request.LeaderId);
+
+            if (user is null)
             {
                 return Result.Fail(UserErrors.Account.NotFound);
             }
 
-            if (cell.LeaderId != request.LiderId &&
-                await _cellRepository.LeaderExistsForAnotherCell(request.LiderId, request.Id))
+            if (request.LeaderId.HasValue && request.LeaderId != cell.LeaderId)
             {
-                return Result.Fail(CellError.AlreadyLeadingCell);
+
+                if (await _cellRepository.LeaderExistsForAnotherCell(request.LeaderId, cell.Id))
+                    return Result.Fail(CellError.AlreadyLeadingCell);
             }
 
-            if (cell.Name != request.Name &&
-                await _cellRepository.NameExistsForAnotherCell(request.Name, request.Id))
-            {
-                return Result.Fail(CellError.NameAlreadyExists);
-            }
-            var validationResult = cell.Update(request.Name, request.LiderId, usuario);
 
-            if (!validationResult.IsSuccess)
-                return validationResult;
+            var updateResult = cell.Update(
+                request.Name ?? cell.Name,
+                request.LeaderId ?? cell.LeaderId,
+                user
+            );
+
+            if (!updateResult.IsSuccess) return updateResult;
 
             await _cellRepository.Update(cell);
-
             return Result.Ok();
 
         }
