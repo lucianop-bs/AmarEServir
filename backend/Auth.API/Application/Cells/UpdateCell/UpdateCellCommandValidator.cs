@@ -11,7 +11,6 @@ namespace Auth.API.Application.Cells.UpdateCell
             RuleFor(x => x.Id)
                .NotEmpty().WithMessage(CellError.IdRequired.Message)
                .WithErrorCode(CellError.IdRequired.Code);
-            
 
             RuleFor(x => x.Name)
             .NotEmpty().WithMessage(CellError.InvalidName.Message)

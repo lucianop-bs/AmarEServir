@@ -35,7 +35,6 @@ namespace Auth.API.Application.Cells.UpdateCell
 
             cell.Update(request.Name, request.LiderId, usuario);
 
-
             var validationResult = cell.Validate();
             if (!validationResult.IsSuccess)
                 return validationResult;

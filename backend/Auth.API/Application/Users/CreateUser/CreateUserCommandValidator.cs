@@ -20,7 +20,6 @@ public class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>
             .Length(11, 13).WithErrorCode(UserErrors.Profile.PhoneInvalid.Code)
             .WithMessage(UserErrors.Profile.PhoneInvalid.Message);
 
-
         RuleFor(x => x.Email)
             .NotEmpty().WithErrorCode(UserErrors.Account.EmailRequired.Code)
             .WithMessage(UserErrors.Account.EmailRequired.Message)
@@ -36,7 +35,6 @@ public class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>
         RuleFor(x => x.Role)
             .IsInEnum().WithErrorCode(UserErrors.Account.RoleInvalid.Code)
             .WithMessage(UserErrors.Account.RoleInvalid.Message);
-
 
         RuleFor(x => x.Address)
             .NotNull().WithErrorCode(UserErrors.Address.AddressRequired.Code)

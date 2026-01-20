@@ -1,30 +1,44 @@
-# Acesse https://aka.ms/customizecontainer para saber como personalizar seu contêiner de depuração e como o Visual Studio usa este Dockerfile para criar suas imagens para uma depuração mais rápida.
 
-# Esta fase é usada durante a execução no VS no modo rápido (Padrão para a configuração de Depuração)
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
-USER $APP_UID
+# Estágio base: Configuração do ambiente de runtime
+# Usa a imagem Alpine do ASP.NET Core 9.0 para reduzir o tamanho da imagem
+FROM mcr.microsoft.com/dotnet/aspnet:9.0-alpine AS base
 WORKDIR /app
+# Expõe a porta 8080 para acesso HTTP
 EXPOSE 8080
-EXPOSE 8081
 
+# Instala bibliotecas ICU necessárias para internacionalização e localização
+RUN apk add --no-cache icu-libs
+# Define que o .NET deve usar as configurações de globalização do sistema operacional
+ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
+# Executa o container com o usuário não-root padrão para maior segurança
+USER $APP_UID
 
-# Esta fase é usada para compilar o projeto de serviço
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
-ARG BUILD_CONFIGURATION=Release
-WORKDIR /src
+# Estágio de build: Compilação da aplicação
+# Usa a imagem Alpine do SDK .NET 9.0 com ferramentas de compilação
+FROM mcr.microsoft.com/dotnet/sdk:9.0-alpine AS build
+WORKDIR /src/Auth.API
+# Copia os arquivos de projeto para o container
 COPY ["Auth.API/Auth.API.csproj", "Auth.API/"]
-RUN dotnet restore "./Auth.API/Auth.API.csproj"
+COPY ["Core/AmarEServir.Core.csproj", "Core/"]
+# Restaura as dependências do projeto
+RUN dotnet restore "Auth.API/Auth.API.csproj"
+
+# Copia todo o código fonte para o container
 COPY . .
-WORKDIR "/src/Auth.API"
-RUN dotnet build "./Auth.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
+# Compila a aplicação em modo Release
+RUN dotnet build "Auth.API/Auth.API.csproj" -c Release -o ../app/build
 
-# Esta fase é usada para publicar o projeto de serviço a ser copiado para a fase final
+# Estágio de publicação: Preparação dos artefatos finais
 FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Auth.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+# Publica a aplicação otimizada para produção
+# UseAppHost=false evita a criação de um executável nativo
+RUN dotnet publish "Auth.API/Auth.API.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
-# Esta fase é usada na produção ou quando executada no VS no modo normal (padrão quando não está usando a configuração de Depuração)
+# Estágio final: Imagem de produção
+# Usa o estágio base (menor e mais seguro) como base final
 FROM base AS final
 WORKDIR /app
+# Copia os artefatos publicados do estágio anterior
 COPY --from=publish /app/publish .
+# Define o ponto de entrada da aplicação
 ENTRYPOINT ["dotnet", "Auth.API.dll"]

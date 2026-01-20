@@ -5,6 +5,7 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Scalar.AspNetCore;
+using System.Text.Json.Serialization;
 
 namespace Auth.API.Api.Configurations
 {
@@ -49,7 +50,16 @@ namespace Auth.API.Api.Configurations
 
                         return new BadRequestObjectResult(result);
                     };
-                });
+                })
+            .AddJsonOptions(options =>
+            {
+
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            })
+            .ConfigureApiBehaviorOptions(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
+            }); ;
             builder.Services.AddOpenApi();
             builder.Services.AddInfrastructure(builder.Configuration);
 

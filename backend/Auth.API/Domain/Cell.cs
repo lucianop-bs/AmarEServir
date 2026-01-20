@@ -49,7 +49,6 @@ namespace Auth.API.Domain
 
             if (!string.IsNullOrWhiteSpace(name)) Name = name;
 
-
             if (LeaderId != leaderId)
             {
 
