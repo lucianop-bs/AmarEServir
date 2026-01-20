@@ -11,7 +11,7 @@ namespace Auth.API.Domain.Contracts
         Task Create(Cell cell);
 
         Task<bool> LeaderExists(Guid leader);
-        Task<bool> NameAlreadyExist(string name);
+        Task<bool> NameAlreadyExists(string name);
         Task<bool> NameExistsForAnotherCell(string name, Guid? currentCellId);
         Task<bool> LeaderExistsForAnotherCell(Guid? leaderId, Guid currentCellId);
 
