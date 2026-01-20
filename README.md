@@ -368,8 +368,8 @@ dotnet run
 
 | Campo | Regras |
 |-------|--------|
-| `name` | Obrigatório, 3-100 caracteres, Uma célula nao pode ter o mesmo nome|
-| `leaderId` | GUID válido (não vazio), Um líder so pode ter uma célula |
+| `name` | Obrigatório, 3-100 caracteres, Uma célula não pode ter o mesmo nome|
+| `leaderId` | GUID válido (não vazio), Um líder só pode ter uma célula |
 
 ---
 
