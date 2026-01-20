@@ -52,12 +52,19 @@ namespace Auth.API.Domain
                 return Result<Cell>.Fail(CellError.LeaderRequired);
             }
 
-            return Result<Cell>.Ok(new Cell(
+            var cell = new Cell(
                 name: name,
                 leaderId: user.Id,
                 membro: user
-            ));
+            );
 
+            var validationResult = cell.Validate();
+            if (!validationResult.IsSuccess)
+            {
+                return Result<Cell>.Fail(validationResult.Errors);
+            }
+
+            return Result<Cell>.Ok(cell);
         }
         public Result Update(string name, Guid? leaderId, User member)
         {
