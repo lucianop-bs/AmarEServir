@@ -36,19 +36,17 @@ namespace Auth.API.Application.Cells.UpdateCell
                 return Result.Fail(UserErrors.Account.NotFound);
             }
 
-            if (cell.LeaderId != request.LiderId)
+            if (cell.LeaderId != request.LiderId &&
+                await _cellRepository.LeaderExistsForAnotherCell(request.LiderId, request.Id))
             {
-                if (await _cellRepository.LeaderExistsForAnotherCell(request.LiderId, request.Id))
-                {
-                    return Result.Fail(CellError.AlreadyLeadingCell);
-                }
-            }
-            if (cell.Name != request.Name)
-            {
-                if (await _cellRepository.NameExistsForAnotherCell(request.Name, request.Id))
-                    return Result.Fail(CellError.NameAlreadyExists);
+                return Result.Fail(CellError.AlreadyLeadingCell);
             }
 
+            if (cell.Name != request.Name &&
+                await _cellRepository.NameExistsForAnotherCell(request.Name, request.Id))
+            {
+                return Result.Fail(CellError.NameAlreadyExists);
+            }
             var validationResult = cell.Update(request.Name, request.LiderId, usuario);
 
             if (!validationResult.IsSuccess)
