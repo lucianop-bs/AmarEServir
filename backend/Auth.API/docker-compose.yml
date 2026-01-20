@@ -1,0 +1,41 @@
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: amar-e-servir-db
+    restart: always
+    environment:
+      # Corrigido: usando '=' para atribuição
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASS}
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - amarservir-network
+
+  auth-api:
+    build:
+      # Como você está na pasta Auth.API, subimos dois níveis para ver o 'Core'
+      context: ../
+      dockerfile: Auth.API/Dockerfile
+    container_name: amar-e-servir-api
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      # Corrigido: Porta interna 27017 e nome da rede unificado
+      - MongoDbSettings__ConnectionString=mongodb://${MONGO_ROOT_USER}:${MONGO_ROOT_PASS}@mongodb:27017
+      - MongoDbSettings__DatabaseName=${DATABASE_NAME}
+    depends_on:
+      - mongodb
+    networks:
+      - amarservir-network
+
+# --- SEÇÕES GLOBAIS (Devem estar na margem esquerda) ---
+networks:
+  amarservir-network:
+    driver: bridge
+
+volumes:
+  mongo_data:
