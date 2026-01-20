@@ -34,7 +34,7 @@ namespace Auth.API.Application.Cells.CreateCell
                 return Result<CellModelView>.Fail(CellError.AlreadyLeadingCell);
             }
 
-            if (await _cellRepository.NameAlreadyExist(request.Name))
+            if (await _cellRepository.NameAlreadyExists(request.Name))
             {
                 return Result<CellModelView>.Fail(CellError.NameAlreadyExists);
             }

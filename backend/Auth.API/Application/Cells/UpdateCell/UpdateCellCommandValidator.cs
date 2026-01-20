@@ -19,8 +19,8 @@ namespace Auth.API.Application.Cells.UpdateCell
             .WithErrorCode(CellError.InvalidNameLength.Code);
 
             RuleFor(x => x.LiderId)
-                .NotEmpty().WithMessage(CellError.LeaderRequired.Message)
-                .WithErrorCode(CellError.LeaderRequired.Code)
+                .NotEmpty().WithMessage(CellError.LeaderRoleRequired.Message)
+                .WithErrorCode(CellError.LeaderRoleRequired.Code)
                 .NotEqual(Guid.Empty).WithMessage(CellError.LeaderInvalid.Message)
                 .WithErrorCode(CellError.LeaderInvalid.Code);
         }

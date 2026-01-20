@@ -13,10 +13,7 @@ namespace Auth.API.Infrastructure.Persistence.Repositories
             _collection = context.Database.GetCollection<Cell>("Cell");
         }
 
-        public async Task Create(IClientSessionHandle session, Cell cell)
-        {
-            await _collection.InsertOneAsync(session, cell);
-        }
+
 
         public async Task Create(Cell cell)
         {

@@ -35,7 +35,7 @@ namespace Auth.API.Domain
                 : Result.Ok(),
 
                 () => LeaderId == Guid.Empty
-                ? Result.Fail(CellError.LeaderRequired)
+                ? Result.Fail(CellError.LeaderRoleRequired)
                 : Result.Ok()
                 );
 
@@ -49,7 +49,7 @@ namespace Auth.API.Domain
         {
             if (user.Role != UserRole.Leader)
             {
-                return Result<Cell>.Fail(CellError.LeaderRequired);
+                return Result<Cell>.Fail(CellError.LeaderRoleRequired);
             }
 
             var cell = new Cell(
@@ -76,7 +76,7 @@ namespace Auth.API.Domain
 
             if (member.Role != UserRole.Leader)
             {
-                return Result.Fail(CellError.LeaderRequired);
+                return Result.Fail(CellError.LeaderRoleRequired);
             }
 
             if (LeaderId != leaderId)
