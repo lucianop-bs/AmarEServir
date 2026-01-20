@@ -18,10 +18,18 @@ namespace Auth.API.Application.Users.UpdateUser
         }
         public async Task<Result> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
         {
+
             var user = await _userRepository.GetUserByGuid(request.Id);
 
             if (user is null)
                 return Result.Fail(UserErrors.Account.NotFound);
+
+            var userEmailAlreadyExists = await _userRepository.EmailExistsForAnotherUser(request.User.Email,request.Id);
+
+            if (userEmailAlreadyExists)
+            {
+                return Result.Fail(UserErrors.Account.EmailAlreadyExists);
+            }
 
             user.UserUpdate(
                 request.User.Name,

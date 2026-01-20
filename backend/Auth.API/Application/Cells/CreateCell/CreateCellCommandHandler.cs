@@ -2,7 +2,6 @@
 using Auth.API.Application.Cells.Models;
 using Auth.API.Domain;
 using Auth.API.Domain.Contracts;
-using Auth.API.Domain.Enums;
 using Auth.API.Domain.Errors;
 using MediatR;
 
@@ -30,38 +29,30 @@ namespace Auth.API.Application.Cells.CreateCell
                 return Result<CellModelView>.Fail(UserErrors.Account.NotFound);
             }
 
-            var userLeaderValidation = IsLeader(user);
-
-            if (!userLeaderValidation.IsSuccess)
+            if (await _cellRepository.LeaderExists(request.LeaderId))
             {
-
-                return Result<CellModelView>.Fail(CellError.LeaderRequired);
-
+                return Result<CellModelView>.Fail(CellError.AlreadyLeadingCell);
             }
 
-            var cell = new Cell(request.Name, user.Id, user);
-            var cellValidation = cell.Validate();
+            if (await _cellRepository.NameAlreadyExist(request.Name))
+            {
+                return Result<CellModelView>.Fail(CellError.NameAlreadyExists);
+            }
+
+            var cellValidation = Cell.Create(request.Name, user);
 
             if (!cellValidation.IsSuccess)
             {
                 return Result<CellModelView>.Fail(cellValidation.Errors);
             }
 
+            var cell = cellValidation.Value;
+
             await _cellRepository.Create(cell);
 
             var response = cell.ToModelView();
 
             return Result<CellModelView>.Ok(response);
-        }
-
-        public Result IsLeader(User user)
-        {
-            if (user.Role != UserRole.Leader)
-            {
-                return Result.Fail(CellError.LeaderRequired);
-            }
-
-            return Result.Ok();
         }
     }
 }

@@ -13,8 +13,8 @@ namespace Auth.API.Application.Cells.UpdateCell
                .WithErrorCode(CellError.IdRequired.Code);
 
             RuleFor(x => x.Name)
-            .NotEmpty().WithMessage(CellError.InvalidName.Message)
-            .WithErrorCode(CellError.InvalidName.Code)
+            .NotEmpty().WithMessage(CellError.NameRequired.Message)
+            .WithErrorCode(CellError.NameRequired.Code)
             .Length(3, 100).WithMessage(CellError.InvalidNameLength.Message)
             .WithErrorCode(CellError.InvalidNameLength.Code);
 

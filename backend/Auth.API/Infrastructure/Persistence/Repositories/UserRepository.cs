@@ -28,7 +28,7 @@ namespace Auth.API.Infrastructure.Persistence.Repositories
             await _collection.ReplaceOneAsync(u => u.Id == user.Id, user);
         }
 
-        public async Task<User> GetUserByGuid(Guid id)
+        public async Task<User> GetUserByGuid(Guid? id)
         {
             return await _collection.Find(u => u.Id == id).FirstOrDefaultAsync();
         }
@@ -36,6 +36,16 @@ namespace Auth.API.Infrastructure.Persistence.Repositories
         public async Task Create(User user)
         {
             await _collection.InsertOneAsync(user);
+        }
+
+        public async Task<User> GetUserByEmail(string email)
+        {
+            return await _collection.Find(u => u.Email == email).FirstOrDefaultAsync();
+        }
+
+        public Task<bool> EmailExistsForAnotherUser(string email, Guid currentUserId)
+        {
+            return _collection.Find(u => u.Email == email && u.Id != currentUserId).AnyAsync();
         }
     }
 }

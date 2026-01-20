@@ -361,15 +361,15 @@ dotnet run
 | `email` | Obrigatório, formato válido |
 | `phone` | Obrigatório, 11-13 caracteres |
 | `password` | Obrigatório, mínimo 6 caracteres |
-| `role` | Enum válido (1=Admin, 2=Leader, 3=Volunteer, 4=Beneficiary) |
+| `role` | Enum válido (1=Admin, 2=Leader, 3=Volunteer, 4=Beneficiary) ou ("Admin", "Leader", "Volunteer", "Beneficiary") |
 | `address` | Obrigatório (rua, numero, bairro, cidade, estado, cep) |
 
 ### Célula
 
 | Campo | Regras |
 |-------|--------|
-| `name` | Obrigatório, 3-100 caracteres |
-| `leaderId` | GUID válido (não vazio) |
+| `name` | Obrigatório, 3-100 caracteres, Uma célula não pode ter o mesmo nome|
+| `leaderId` | GUID válido (não vazio), Um líder só pode ter uma célula |
 
 ---
 
@@ -487,7 +487,7 @@ Content-Type: application/json
 
 {
   "name": "Célula Renovada",
-  "liderId": "770e8400-e29b-41d4-a716-446655440002"
+  "leaderId": "770e8400-e29b-41d4-a716-446655440002"
 }
 ```
 

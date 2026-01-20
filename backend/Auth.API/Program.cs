@@ -1,6 +1,14 @@
 using Auth.API.Api.Configurations;
 
-await WebApplication.CreateBuilder(args)
-   .ConfigureApplicationServices() // Faz todos os Adds (API + Infra)
-   .Build()                        // Constrói o host
-   .ConfigureApplicationPipeline(); // Faz todos os Uses/Maps e dá o Run
+var builder = WebApplication.CreateBuilder(args);
+
+// 1. Configura os serviços e constrói o App
+var app = builder
+    .ConfigureApplicationServices() // Retorna o builder
+    .Build();                       // Transforma o builder em app
+
+// 2. Configura o pipeline de execução
+app.ConfigureApplicationPipeline(); // Configura middlewares (CORS, Swagger, etc)
+
+// 3. Roda a aplicação
+app.Run();
