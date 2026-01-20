@@ -15,7 +15,7 @@ namespace Auth.API.Domain.Errors
         public static Error AlreadyLeadingCell => new("Cell.AlreadyLeadingCell", "O líder informado já está liderando uma célula.", ErrorType.Validation);
 
         public static Error NameAlreadyExists => new("Cell.NameAlreadyExists", "Já existe uma célula cadastrada com este nome.", ErrorType.Conflict);
-        public static Error LeaderRequired => new("Cell.LeaderRequired", "Somente usuários com perfil de Líder podem gerenciar uma célula.", ErrorType.Validation);
+        public static Error LeaderRoleRequired => new("Cell.LeaderRoleRequired", "Somente usuários com perfil de Líder podem gerenciar uma célula.", ErrorType.Validation);
 
     }
 }
