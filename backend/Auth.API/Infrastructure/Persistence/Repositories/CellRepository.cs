@@ -38,7 +38,7 @@ namespace Auth.API.Infrastructure.Persistence.Repositories
             return _collection.Find(c => c.LeaderId == leader).AnyAsync();
         }
 
-        public Task<bool> NameAlreadyExist(string name)
+        public Task<bool> NameAlreadyExists(string name)
         {
             return _collection.Find(c => c.Name == name).AnyAsync();
         }
