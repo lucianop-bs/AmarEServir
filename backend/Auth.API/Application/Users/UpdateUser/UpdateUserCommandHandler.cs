@@ -1,4 +1,5 @@
 ﻿using AmarEServir.Core.Results.Base;
+using Auth.API.Application.Users.UpdateUser.Extensions;
 using Auth.API.Domain.Contracts;
 using Auth.API.Domain.Errors;
 using MediatR;
@@ -6,9 +7,9 @@ using MediatR;
 namespace Auth.API.Application.Users.UpdateUser
 {
 
-    public interface IUpdateUserComandHandler : IRequestHandler<UpdateUserCommand, Result>
+    public interface IUpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, Result>
     { }
-    public class UpdateUserCommandHandler : IUpdateUserComandHandler
+    public class UpdateUserCommandHandler : IUpdateUserCommandHandler
     {
 
         private readonly IUserRepository _userRepository;
@@ -31,12 +32,15 @@ namespace Auth.API.Application.Users.UpdateUser
                 return Result.Fail(UserErrors.Account.EmailAlreadyExists);
             }
 
+            var addressUpdate = request.User.Address != null ? request.User.Address.ToAddress() : null;
+
             user.UserUpdate(
                 request.User.Name,
                 request.User.Email,
                 request.User.Phone,
-                request.User.Address,
+                addressUpdate,
                 request.User.Role);
+           
 
             var validationUser = user.Validate();
             if (!validationUser.IsSuccess)

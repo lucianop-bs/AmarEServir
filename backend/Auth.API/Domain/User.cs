@@ -48,7 +48,6 @@ namespace Auth.API.Domain
                     ? Result.Fail(UserErrors.Profile.PhoneRequired)
                     : Result.Ok(),
 
-                // Validações de Conta (Account)
                 () => string.IsNullOrWhiteSpace(Email)
                     ? Result.Fail(UserErrors.Account.EmailRequired)
                     : Result.Ok(),
@@ -81,7 +80,8 @@ namespace Auth.API.Domain
             if (!string.IsNullOrWhiteSpace(phone))
                 Phone = phone;
             if (address != null)
-                Address = address;
+                
+                Address = Address.Update(address);
             if (role != null)
                 Role = role.Value;
 

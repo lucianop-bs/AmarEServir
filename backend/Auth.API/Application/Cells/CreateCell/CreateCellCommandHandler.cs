@@ -22,24 +22,24 @@ namespace Auth.API.Application.Cells.CreateCell
         public async Task<Result<CellModelView>> Handle(CreateCellCommand request, CancellationToken cancellationToken)
         {
 
-            var user = await _userRepository.GetUserByGuid(request.LeaderId);
+            var user = await _userRepository.GetUserByGuid(request.Cell.LeaderId);
 
             if (user is null)
             {
                 return Result<CellModelView>.Fail(UserErrors.Account.NotFound);
             }
 
-            if (await _cellRepository.LeaderExists(request.LeaderId))
+            if (await _cellRepository.LeaderExists(request.Cell.LeaderId))
             {
                 return Result<CellModelView>.Fail(CellError.AlreadyLeadingCell);
             }
 
-            if (await _cellRepository.NameAlreadyExists(request.Name))
+            if (await _cellRepository.NameAlreadyExists(request.Cell.Name))
             {
                 return Result<CellModelView>.Fail(CellError.NameAlreadyExists);
             }
 
-            var cellValidation = Cell.Create(request.Name, user);
+            var cellValidation = Cell.Create(request.Cell.Name, user);
 
             if (!cellValidation.IsSuccess)
             {

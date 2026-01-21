@@ -7,7 +7,7 @@ namespace Auth.API.Application.Users.CreateUser
         public static User ToDomain(this CreateUserCommand command)
         {
 
-            return new User(command.Name, command.Email, command.Phone, command.Password, command.Address, command.Role);
+            return new User(command.User.Name, command.User.Email, command.User.Phone, command.User.Password, command.User.Address, command.User.Role);
         }
     }
 }

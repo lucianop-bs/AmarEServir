@@ -4,7 +4,6 @@ using MediatR;
 
 namespace Auth.API.Application.Cells.CreateCell
 {
-
-    public record class CreateCellCommand(string Name, Guid LeaderId) : IRequest<Result<CellModelView>>;
-
+    public record class CreateCellCommand(CreateCellRequest Cell) : IRequest<Result<CellModelView>>;
+    public record class CreateCellRequest(string? Name, Guid? LeaderId);
 }

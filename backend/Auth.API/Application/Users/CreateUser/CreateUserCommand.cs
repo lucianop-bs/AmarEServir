@@ -6,6 +6,7 @@ using MediatR;
 
 namespace Auth.API.Application.Users.CreateUser
 {
-    public record class CreateUserCommand(string Name, string Email, string Phone, string Password, UserRole Role, Address Address) : IRequest<Result<UserModelView>>;
+    public record class CreateUserCommand(CreateUserRequest User) : IRequest<Result<UserModelView>>;
 
+    public record class CreateUserRequest(string Name, string Email, string Phone, string Password, UserRole Role, Address Address);
 }

@@ -29,32 +29,31 @@ namespace Auth.API.Application.Cells.UpdateCell
                 return Result.Fail(CellError.NotFound);
             }
 
-            if (!string.IsNullOrWhiteSpace(request.Name) && request.Name != cell.Name)
+            if (!string.IsNullOrWhiteSpace(request.Cell.Name) && request.Cell.Name != cell.Name)
             {
-                if (await _cellRepository.NameExistsForAnotherCell(request.Name, request.Id))
+                if (await _cellRepository.NameExistsForAnotherCell(request.Cell.Name, request.Id))
                     return Result.Fail(CellError.NameAlreadyExists);
             }
 
-            var leaderIdRequest = request.LeaderId ?? cell.LeaderId;
+            var leaderIdRequest = request.Cell.LeaderId ?? cell.LeaderId;
 
-            var user = await _userRepository.GetUserByGuid(request.LeaderId);
+            var user = await _userRepository.GetUserByGuid(leaderIdRequest);
 
             if (user is null)
             {
-                return Result.Fail(UserErrors.Account.NotFound);
+                return Result.Fail(CellError.LeaderNotFound);
             }
 
-            if (request.LeaderId.HasValue && request.LeaderId != cell.LeaderId)
+            if (leaderIdRequest.HasValue && request.Cell.LeaderId != cell.LeaderId)
             {
 
-                if (await _cellRepository.LeaderExistsForAnotherCell(request.LeaderId, cell.Id))
+                if (await _cellRepository.LeaderExistsForAnotherCell(request.Cell.LeaderId, cell.Id))
                     return Result.Fail(CellError.AlreadyLeadingCell);
             }
 
-
             var updateResult = cell.Update(
-                request.Name ?? cell.Name,
-                request.LeaderId ?? cell.LeaderId,
+                request.Cell.Name ?? cell.Name,
+                request.Cell.LeaderId ?? cell.LeaderId,
                 user
             );
 

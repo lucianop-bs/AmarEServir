@@ -24,9 +24,9 @@ namespace Auth.API.Api.Controllers
         [ProducesResponseType(typeof(UserModelView), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
 
-        public async Task<IActionResult> CreateUser(CreateUserCommand command)
+        public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest request)
         {
-            var result = await _mediator.Send(command);
+            var result = await _mediator.Send(new CreateUserCommand(request));
 
             return CreatedAtAction(nameof(GetUser), new { id = result.IsSuccess ? result.Value.Id : Guid.Empty }, result);
 

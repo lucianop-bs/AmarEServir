@@ -12,17 +12,15 @@ namespace Auth.API.Application.Cells.UpdateCell
                .NotEmpty().WithMessage(CellError.IdRequired.Message)
                .WithErrorCode(CellError.IdRequired.Code);
 
-            RuleFor(x => x.Name)
-            .NotEmpty().WithMessage(CellError.NameRequired.Message)
-            .WithErrorCode(CellError.NameRequired.Code)
+            RuleFor(x => x.Cell.Name)
             .Length(3, 100).WithMessage(CellError.InvalidNameLength.Message)
-            .WithErrorCode(CellError.InvalidNameLength.Code);
+            .WithErrorCode(CellError.InvalidNameLength.Code)
+            .When(x => !string.IsNullOrWhiteSpace(x.Cell.Name));
 
-            RuleFor(x => x.LiderId)
-                .NotEmpty().WithMessage(CellError.LeaderRoleRequired.Message)
-                .WithErrorCode(CellError.LeaderRoleRequired.Code)
+            RuleFor(x => x.Cell.LeaderId)
                 .NotEqual(Guid.Empty).WithMessage(CellError.LeaderInvalid.Message)
-                .WithErrorCode(CellError.LeaderInvalid.Code);
+                .WithErrorCode(CellError.LeaderInvalid.Code)
+                .When(x => x.Cell.LeaderId.HasValue);
         }
     }
 }

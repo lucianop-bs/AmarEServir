@@ -8,7 +8,8 @@ namespace Auth.API.Application.Cells.Models
     {
         public static UpdateCellCommand ToCommand(this UpdateCellInputModel inputModel, Guid id)
         {
-            return new UpdateCellCommand(id, inputModel.Name, inputModel.LiderId);
+            var request = new UpdateCellRequest(inputModel.Name, inputModel.LiderId);
+            return new UpdateCellCommand(id, request);
         }
     }
 }

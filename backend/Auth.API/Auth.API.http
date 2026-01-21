@@ -1,6 +1,100 @@
 @Auth.API_HostAddress = http://localhost:5047
 
-GET {{Auth.API_HostAddress}}/weatherforecast/
+POST {{Auth.API_HostAddress}}/api/user
+Content-Type: application/json
+Accept: application/json
+{
+  "name": "João da Silva",
+  "email": "joaoipccexemplo.com",
+  "password":"123321",
+  "phone": "61999999999",
+  "address": {
+    "rua": "Rua das Flores",
+    "quadra": "Q 10",
+    "numero": "15",
+    "bairro": "testandoo",
+    "cidade": "tesnadoo",
+    "estado": "GO",
+    "complemento": "Apto 101",
+    "cep": "72800000"
+  },
+  "role": 1
+}
+###
+PATCH {{Auth.API_HostAddress}}/api/user/d7b0e26b-b036-487f-8736-51f9e50208a3
+Content-Type: application/json
 Accept: application/json
 
+{
+  "name": "João da SilvaAAAAAAAAAAAAAAA",
+  "email": "joaoipc09c@exemplo.com",
+  "phone": "61999999999",
+  "address": {
+    "rua": "Rua das Flores X!",
+    "quadra": "",
+    "numero": "",
+    "bairro": "testandoBairro",
+    "cidade": "Luziânia", 
+    "estado": "GO",
+    "complemento": "Apto 101",
+    "cep": "72813110"
+  },
+  "role": 2
+}
 ###
+# Update parcial - apenas nome
+PATCH {{Auth.API_HostAddress}}/api/user/d7b0e26b-b036-487f-8736-51f9e50208a3
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Novo Nome Parcial"
+}
+###
+# Update parcial - apenas email e phone
+PATCH {{Auth.API_HostAddress}}/api/user/d7b0e26b-b036-487f-8736-51f9e50208a3
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "novoemail@exemplo.com",
+  "phone": "61988887777"
+}
+###
+POST {{Auth.API_HostAddress}}/api/cells
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Célula Exemplo",
+  "leaderId": "d7b0e26b-b036-487f-8736-51f9e50208a3"
+}
+###
+PATCH {{Auth.API_HostAddress}}/api/cells/586c8eb8-ab7a-4ebc-8a89-b848f53646a5
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Célula Atualizada",
+  "leaderId": "d7b0e26b-b036-487f-8736-51f9e50208a3"
+}
+###
+# Update parcial - apenas nome da célula
+PATCH {{Auth.API_HostAddress}}/api/cells/586c8eb8-ab7a-4ebc-8a89-b848f53646a5
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Novo Nome da Célula"
+}
+###
+# Update parcial - apenas líder
+PATCH {{Auth.API_HostAddress}}/api/cells/586c8eb8-ab7a-4ebc-8a89-b848f53646a5
+Content-Type: application/json
+Accept: application/json
+
+{
+  "leaderId": "d7b0e26b-b036-487f-8736-51f9e50208a3"
+}
+
+

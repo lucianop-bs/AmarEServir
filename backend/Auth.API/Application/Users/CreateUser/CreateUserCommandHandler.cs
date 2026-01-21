@@ -23,7 +23,7 @@ namespace Auth.API.Application.Users.CreateUser
         }
         public async Task<Result<UserModelView>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
-            var userEmailAlreadyExists = await _userRepository.GetUserByEmail(request.Email);
+            var userEmailAlreadyExists = await _userRepository.GetUserByEmail(request.User.Email);
 
             if (userEmailAlreadyExists is not null)
             {

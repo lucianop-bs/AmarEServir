@@ -7,8 +7,8 @@
         Task Update(User user);
         Task Delete(Guid id);
         Task<User> GetUserByGuid(Guid? id);
-        Task<User> GetUserByEmail(string email);
-        Task<bool> EmailExistsForAnotherUser(string email, Guid currentUserId);
+        Task<User> GetUserByEmail(string? email);
+        Task<bool> EmailExistsForAnotherUser(string? email, Guid? currentUserId);
 
     }
 }

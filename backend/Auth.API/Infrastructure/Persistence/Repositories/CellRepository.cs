@@ -13,8 +13,6 @@ namespace Auth.API.Infrastructure.Persistence.Repositories
             _collection = context.Database.GetCollection<Cell>("Cell");
         }
 
-
-
         public async Task Create(Cell cell)
         {
             await _collection.InsertOneAsync(cell);
@@ -30,7 +28,7 @@ namespace Auth.API.Infrastructure.Persistence.Repositories
             return await _collection.Find(c => c.Id == id).FirstOrDefaultAsync();
         }
 
-        public Task<bool> LeaderExists(Guid leader)
+        public Task<bool> LeaderExists(Guid? leader)
         {
             return _collection.Find(c => c.LeaderId == leader).AnyAsync();
         }
