@@ -40,6 +40,6 @@ public class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>
         RuleFor(x => x.User.Address)
             .NotNull().WithErrorCode(UserError.Address.AddressRequired.Code)
             .WithMessage(UserError.Address.AddressRequired.Message)
-            .SetValidator(new AddressValidator());
+            .SetValidator(new AddressRequestValidator());
     }
 }

@@ -1,12 +1,12 @@
-﻿using Auth.API.Domain;
+﻿using Auth.API.Application.Users.Dtos;
 using Auth.API.Domain.Errors;
 using FluentValidation;
 
 namespace Auth.API.Application.Users.CreateUser;
 
-public class AddressValidator : AbstractValidator<Address>
+public class AddressRequestValidator : AbstractValidator<AddressRequestDto>
 {
-    public AddressValidator()
+    public AddressRequestValidator()
     {
         // CEP
         RuleFor(x => x.Cep)

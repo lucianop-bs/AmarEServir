@@ -26,7 +26,7 @@ namespace Auth.API.Application.Users.Mappers
                 dto.Email,
                 dto.Phone,
                 dto.Password,
-                dto.Address,
+                dto.Address.ToDomain(),
                 dto.Role
             );
         }

@@ -80,7 +80,6 @@ namespace Auth.API.Domain
             if (!string.IsNullOrWhiteSpace(phone))
                 Phone = phone;
             if (address != null)
-                
                 Address = Address.Update(address);
             if (role != null)
                 Role = role.Value;
