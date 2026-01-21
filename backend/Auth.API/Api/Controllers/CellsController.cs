@@ -1,8 +1,8 @@
 ﻿using AmarEServir.Core.Results.Extensions;
+using Auth.API.Application.Cells.Contracts;
 using Auth.API.Application.Cells.CreateCell;
 using Auth.API.Application.Cells.DeleteCell;
 using Auth.API.Application.Cells.GetCellByGuid;
-using Auth.API.Application.Cells.Models;
 using Auth.API.Application.Cells.UpdateCell;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -21,7 +21,7 @@ namespace Auth.API.Api.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(CellModelView), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(CellResponse), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
 
         public async Task<IActionResult> CreateCell([FromBody] CreateCellRequest request)
@@ -42,7 +42,7 @@ namespace Auth.API.Api.Controllers
         }
 
         [HttpGet("{id}", Name = "GetCellByGuid")]
-        [ProducesResponseType(typeof(CellModelView), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(CellResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetCell(Guid id)
         {

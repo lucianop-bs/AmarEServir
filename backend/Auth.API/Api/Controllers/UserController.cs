@@ -21,7 +21,7 @@ namespace Auth.API.Api.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(UserModelView), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(UserResponse), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
 
         public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest request)
@@ -43,7 +43,7 @@ namespace Auth.API.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(UserModelView), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetUser(Guid id)
         {

@@ -10,13 +10,18 @@
 
   <ItemGroup>
     <Compile Remove="Application\Cells\CreateCell\Hand\**" />
+    <Compile Remove="Application\Common\Validators\**" />
     <Content Remove="Application\Cells\CreateCell\Hand\**" />
+    <Content Remove="Application\Common\Validators\**" />
     <EmbeddedResource Remove="Application\Cells\CreateCell\Hand\**" />
+    <EmbeddedResource Remove="Application\Common\Validators\**" />
     <None Remove="Application\Cells\CreateCell\Hand\**" />
+    <None Remove="Application\Common\Validators\**" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Remove="Api\Controllers\CellController.cs" />
+    <Compile Remove="Application\Cells\Contracts\UpdateCellInputModel.cs" />
   </ItemGroup>
 
   <ItemGroup>

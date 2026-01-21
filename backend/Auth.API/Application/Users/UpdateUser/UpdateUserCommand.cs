@@ -26,7 +26,7 @@ namespace Auth.API.Application.Users.UpdateUser.Extensions
     {
         public static Address ToAddress(this AddressRequest request)
         {
-            return new Address(                
+            return new Address(
                 request.Rua ?? string.Empty,
                 request.Quadra ?? string.Empty,
                 request.Numero ?? string.Empty,

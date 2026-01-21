@@ -1,7 +1,9 @@
 ﻿using AmarEServir.Core.Filters;
+using AmarEServir.Core.Json.Converter;
 using AmarEServir.Core.Middlewares;
 using Auth.API.Application.Cells.CreateCell;
 using Auth.API.Application.Common;
+
 using FluentValidation;
 
 using MediatR;
@@ -15,7 +17,7 @@ public static class ApiConfig
 {
     public static WebApplicationBuilder ConfigureApplicationServices(this WebApplicationBuilder builder)
     {
-        // 1. APONTAMENTO DE ASSEMBLY (Mude para uma classe da camada de Application)
+        // 1. APONTAMENTO DE ASSEMBLY 
         var applicationAssembly = typeof(CreateCellCommand).Assembly;
 
         // 2. Injeção de Dependência: FluentValidation e MediatR

@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Auth.API.Api.Configurations;
+namespace AmarEServir.Core.Json.Converter;
 
 public class NullableGuidConverter : JsonConverter<Guid?>
 {

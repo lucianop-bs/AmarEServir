@@ -48,7 +48,7 @@ public record class Address(
 
         return Result.Ok();
     }
-    
+
     public Address Update(Address newValues)
     {
         return this with

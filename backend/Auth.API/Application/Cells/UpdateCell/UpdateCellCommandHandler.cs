@@ -60,6 +60,7 @@ namespace Auth.API.Application.Cells.UpdateCell
             if (!updateResult.IsSuccess) return updateResult;
 
             await _cellRepository.Update(cell);
+
             return Result.Ok();
 
         }

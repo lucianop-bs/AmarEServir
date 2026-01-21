@@ -1,4 +1,6 @@
-﻿using Auth.API.Domain.Errors;
+﻿using Auth.API.Application.Users.Common.Validators;
+using Auth.API.Application.Users.UpdateUser;
+using Auth.API.Domain.Errors;
 using FluentValidation;
 
 namespace Auth.API.Application.Users.UpdateUser;
@@ -28,7 +30,7 @@ public class UpdateUserRequestValidator : AbstractValidator<UpdateUserRequest>
             .When(x => x.Role.HasValue);
 
         RuleFor(x => x.Address)
-            .SetValidator(new AddressRequestValidator())
+            .SetValidator(new UpdateAddressValidator())
             .When(x => x.Address != null);
     }
 }
@@ -48,38 +50,44 @@ public class UpdateUserCommandValidator : AbstractValidator<UpdateUserCommand>
     }
 }
 
-public class AddressRequestValidator : AbstractValidator<AddressRequest>
+public class UpdateAddressValidator : AbstractValidator<AddressRequest>
 {
-    public AddressRequestValidator()
+    public UpdateAddressValidator()
     {
-        RuleFor(x => x.Rua)
-            .NotEmpty().WithErrorCode(UserErrors.Address.RuaRequired.Code)
-            .WithMessage(UserErrors.Address.RuaRequired.Message)
-            .When(x => !string.IsNullOrWhiteSpace(x.Rua));
-
-        RuleFor(x => x.Numero)
-            .NotEmpty().WithErrorCode(UserErrors.Address.NumeroRequired.Code)
-            .WithMessage(UserErrors.Address.NumeroRequired.Message)
-            .When(x => !string.IsNullOrWhiteSpace(x.Numero));
-
-        RuleFor(x => x.Bairro)
-            .NotEmpty().WithErrorCode(UserErrors.Address.BairroRequired.Code)
-            .WithMessage(UserErrors.Address.BairroRequired.Message)
-             .When(x => !string.IsNullOrWhiteSpace(x.Bairro));
-
-        RuleFor(x => x.Cidade)
-            .NotEmpty().WithErrorCode(UserErrors.Address.CidadeRequired.Code)
-            .WithMessage(UserErrors.Address.CidadeRequired.Message)
-             .When(x => !string.IsNullOrWhiteSpace(x.Cidade));
+        RuleFor(x => x.Cep)
+            .Matches(@"^\d{8}$")
+            .WithErrorCode(UserErrors.Address.CepFormat.Code)
+            .WithMessage(UserErrors.Address.CepFormat.Message)
+            .When(x => !string.IsNullOrWhiteSpace(x.Cep));
 
         RuleFor(x => x.Estado)
-            .NotEmpty().WithErrorCode(UserErrors.Address.EstadoRequired.Code)
-            .WithMessage(UserErrors.Address.EstadoRequired.Message)
-              .When(x => !string.IsNullOrWhiteSpace(x.Estado));
+            .Length(2)
+            .WithErrorCode(UserErrors.Address.EstadoInvalid.Code)
+            .WithMessage(UserErrors.Address.EstadoInvalid.Message)
+            .When(x => !string.IsNullOrWhiteSpace(x.Estado));
 
-        RuleFor(x => x.Cep)
-            .NotEmpty().WithErrorCode(UserErrors.Address.CepRequired.Code)
-            .WithMessage(UserErrors.Address.CepRequired.Message)
-            .When(x => !string.IsNullOrWhiteSpace(x.Cep));
+        RuleFor(x => x.Rua)
+            .Length(2, 100)
+            .WithErrorCode(UserErrors.Address.RuaInvalid.Code)
+            .WithMessage(UserErrors.Address.RuaInvalid.Message)
+            .When(x => !string.IsNullOrWhiteSpace(x.Rua));
+
+        RuleFor(x => x.Bairro)
+            .Length(2, 200)
+            .WithErrorCode(UserErrors.Address.BairroInvalid.Code)
+            .WithMessage(UserErrors.Address.BairroInvalid.Message)
+            .When(x => !string.IsNullOrWhiteSpace(x.Bairro));
+
+        RuleFor(x => x.Cidade)
+            .Length(2, 100)
+            .WithErrorCode(UserErrors.Address.CidadeInvalid.Code)
+            .WithMessage(UserErrors.Address.CidadeInvalid.Message)
+            .When(x => !string.IsNullOrWhiteSpace(x.Cidade));
+
+        RuleFor(x => x.Numero)
+            .Length(1, 20)
+            .WithErrorCode(UserErrors.Address.NumeroLimit.Code)
+            .WithMessage(UserErrors.Address.NumeroLimit.Message)
+            .When(x => !string.IsNullOrWhiteSpace(x.Numero));
     }
 }

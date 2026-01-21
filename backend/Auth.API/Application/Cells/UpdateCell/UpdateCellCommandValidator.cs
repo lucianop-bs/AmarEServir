@@ -1,4 +1,5 @@
-﻿using Auth.API.Domain.Errors;
+﻿
+using Auth.API.Domain.Errors;
 using FluentValidation;
 
 namespace Auth.API.Application.Cells.UpdateCell
@@ -21,6 +22,7 @@ namespace Auth.API.Application.Cells.UpdateCell
                 .NotEqual(Guid.Empty).WithMessage(CellError.LeaderInvalid.Message)
                 .WithErrorCode(CellError.LeaderInvalid.Code)
                 .When(x => x.Cell.LeaderId.HasValue);
+
         }
     }
 }
