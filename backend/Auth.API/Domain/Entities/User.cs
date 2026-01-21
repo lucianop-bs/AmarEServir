@@ -41,27 +41,27 @@ namespace Auth.API.Domain
             var resultValidation = ResultValidation.ValidateCollectErrors(
 
                 () => string.IsNullOrWhiteSpace(Name)
-                    ? Result.Fail(UserErrors.Profile.NameRequired)
+                    ? Result.Fail(UserError.Profile.NameRequired)
                     : Result.Ok(),
 
                 () => string.IsNullOrWhiteSpace(Phone)
-                    ? Result.Fail(UserErrors.Profile.PhoneRequired)
+                    ? Result.Fail(UserError.Profile.PhoneRequired)
                     : Result.Ok(),
 
                 () => string.IsNullOrWhiteSpace(Email)
-                    ? Result.Fail(UserErrors.Account.EmailRequired)
+                    ? Result.Fail(UserError.Account.EmailRequired)
                     : Result.Ok(),
 
                 () => string.IsNullOrWhiteSpace(Password)
-                    ? Result.Fail(UserErrors.Account.PasswordRequired)
+                    ? Result.Fail(UserError.Account.PasswordRequired)
                     : Result.Ok(),
 
                 () => !Enum.IsDefined(Role)
-                    ? Result.Fail(UserErrors.Account.RoleInvalid)
+                    ? Result.Fail(UserError.Account.RoleInvalid)
                     : Result.Ok(),
 
                 () => Address == null
-                    ? Result.Fail(UserErrors.Address.AddressRequired)
+                    ? Result.Fail(UserError.Address.AddressRequired)
                     : Address.Validate()
             );
 

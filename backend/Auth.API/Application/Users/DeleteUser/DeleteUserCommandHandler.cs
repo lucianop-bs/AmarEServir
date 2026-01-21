@@ -22,7 +22,7 @@ namespace Auth.API.Application.Users.DeleteUser
 
             if (user is null)
             {
-                return Result.Fail(UserErrors.Account.NotFound);
+                return Result.Fail(UserError.Account.NotFound);
 
             }
 

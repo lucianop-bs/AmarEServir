@@ -9,37 +9,37 @@ public class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>
     {
 
         RuleFor(x => x.User.Name)
-            .NotEmpty().WithErrorCode(UserErrors.Profile.NameRequired.Code)
-            .WithMessage(UserErrors.Profile.NameRequired.Message)
-            .Length(3, 50).WithErrorCode(UserErrors.Profile.NameLength.Code)
-            .WithMessage(UserErrors.Profile.NameLength.Message);
+            .NotEmpty().WithErrorCode(UserError.Profile.NameRequired.Code)
+            .WithMessage(UserError.Profile.NameRequired.Message)
+            .Length(3, 50).WithErrorCode(UserError.Profile.NameLength.Code)
+            .WithMessage(UserError.Profile.NameLength.Message);
 
         RuleFor(x => x.User.Phone)
-            .NotEmpty().WithErrorCode(UserErrors.Profile.PhoneRequired.Code)
-            .WithMessage(UserErrors.Profile.PhoneRequired.Message)
-            .Length(11, 13).WithErrorCode(UserErrors.Profile.PhoneInvalid.Code)
-            .WithMessage(UserErrors.Profile.PhoneInvalid.Message);
+            .NotEmpty().WithErrorCode(UserError.Profile.PhoneRequired.Code)
+            .WithMessage(UserError.Profile.PhoneRequired.Message)
+            .Length(11, 13).WithErrorCode(UserError.Profile.PhoneInvalid.Code)
+            .WithMessage(UserError.Profile.PhoneInvalid.Message);
 
         RuleFor(x => x.User.Email)
-            .NotEmpty().WithErrorCode(UserErrors.Account.EmailRequired.Code)
-            .WithMessage(UserErrors.Account.EmailRequired.Message)
-            .EmailAddress().WithErrorCode(UserErrors.Account.InvalidEmail.Code)
-            .WithMessage(UserErrors.Account.InvalidEmail.Message);
+            .NotEmpty().WithErrorCode(UserError.Account.EmailRequired.Code)
+            .WithMessage(UserError.Account.EmailRequired.Message)
+            .EmailAddress().WithErrorCode(UserError.Account.InvalidEmail.Code)
+            .WithMessage(UserError.Account.InvalidEmail.Message);
 
         RuleFor(x => x.User.Password)
            
-            .NotEmpty().WithErrorCode(UserErrors.Account.PasswordRequired.Code)
-            .WithMessage(UserErrors.Account.PasswordRequired.Message)
-            .MinimumLength(6).WithErrorCode(UserErrors.Account.WeakPassword.Code)
-            .WithMessage(UserErrors.Account.WeakPassword.Message);
+            .NotEmpty().WithErrorCode(UserError.Account.PasswordRequired.Code)
+            .WithMessage(UserError.Account.PasswordRequired.Message)
+            .MinimumLength(6).WithErrorCode(UserError.Account.WeakPassword.Code)
+            .WithMessage(UserError.Account.WeakPassword.Message);
 
         RuleFor(x => x.User.Role)
-            .IsInEnum().WithErrorCode(UserErrors.Account.RoleInvalid.Code)
-            .WithMessage(UserErrors.Account.RoleInvalid.Message);
+            .IsInEnum().WithErrorCode(UserError.Account.RoleInvalid.Code)
+            .WithMessage(UserError.Account.RoleInvalid.Message);
 
         RuleFor(x => x.User.Address)
-            .NotNull().WithErrorCode(UserErrors.Address.AddressRequired.Code)
-            .WithMessage(UserErrors.Address.AddressRequired.Message)
+            .NotNull().WithErrorCode(UserError.Address.AddressRequired.Code)
+            .WithMessage(UserError.Address.AddressRequired.Message)
             .SetValidator(new AddressValidator());
     }
 }

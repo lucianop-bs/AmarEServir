@@ -1,5 +1,5 @@
 ﻿using AmarEServir.Core.Results.Base;
-using Auth.API.Application.Users.UpdateUser.Extensions;
+using Auth.API.Application.Users.Mappers;
 using Auth.API.Domain.Contracts;
 using Auth.API.Domain.Errors;
 using MediatR;
@@ -23,16 +23,16 @@ namespace Auth.API.Application.Users.UpdateUser
             var user = await _userRepository.GetUserByGuid(request.Id);
 
             if (user is null)
-                return Result.Fail(UserErrors.Account.NotFound);
+                return Result.Fail(UserError.Account.NotFound);
 
             var userEmailAlreadyExists = await _userRepository.EmailExistsForAnotherUser(request.User.Email,request.Id);
 
             if (userEmailAlreadyExists)
             {
-                return Result.Fail(UserErrors.Account.EmailAlreadyExists);
+                return Result.Fail(UserError.Account.EmailAlreadyExists);
             }
 
-            var addressUpdate = request.User.Address != null ? request.User.Address.ToAddress() : null;
+            var addressUpdate = request.User.Address != null ? request.User.Address.ToDomain() : null;
 
             user.UserUpdate(
                 request.User.Name,

@@ -1,5 +1,6 @@
 ﻿using AmarEServir.Core.Results.Base;
-using Auth.API.Application.Users.Models;
+using Auth.API.Application.Users.Dtos;
+using Auth.API.Application.Users.Mappers;
 using Auth.API.Domain.Contracts;
 using Auth.API.Domain.Errors;
 using MediatR;
@@ -7,7 +8,7 @@ using MediatR;
 namespace Auth.API.Application.Users.CreateUser
 {
 
-    public interface ICreateUserCommandHandler : IRequestHandler<CreateUserCommand, Result<UserModelView>>
+    public interface ICreateUserCommandHandler : IRequestHandler<CreateUserCommand, Result<UserResponseDto>>
     {
     }
     public class CreateUserCommandHandler : ICreateUserCommandHandler
@@ -21,27 +22,27 @@ namespace Auth.API.Application.Users.CreateUser
 
             _cellRepository = cellRepository;
         }
-        public async Task<Result<UserModelView>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+        public async Task<Result<UserResponseDto>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
             var userEmailAlreadyExists = await _userRepository.GetUserByEmail(request.User.Email);
 
             if (userEmailAlreadyExists is not null)
             {
-                return Result<UserModelView>.Fail(UserErrors.Account.EmailAlreadyExists);
+                return Result<UserResponseDto>.Fail(UserError.Account.EmailAlreadyExists);
             }
 
-            var user = request.ToDomain();
+            var user = request.User.ToDomain();
 
             var userValidate = user.Validate();
 
             if (!userValidate.IsSuccess)
-                return Result<UserModelView>.Fail(userValidate.Errors);
+                return Result<UserResponseDto>.Fail(userValidate.Errors);
 
             await _userRepository.Create(user);
 
-            var response = user.ToModelUserView();
+            var response = user.ToResponseDto();
 
-            return Result<UserModelView>.Ok(response);
+            return Result<UserResponseDto>.Ok(response);
 
         }
     }

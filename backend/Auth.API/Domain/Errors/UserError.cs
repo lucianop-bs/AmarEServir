@@ -2,7 +2,7 @@
 
 namespace Auth.API.Domain.Errors;
 
-public static class UserErrors
+public static class UserError
 {
 
     public static class Account

@@ -1,8 +1,8 @@
 ﻿using AmarEServir.Core.Results.Extensions;
 using Auth.API.Application.Cells.CreateCell;
 using Auth.API.Application.Cells.DeleteCell;
+using Auth.API.Application.Cells.Dtos;
 using Auth.API.Application.Cells.GetCellByGuid;
-using Auth.API.Application.Cells.Models;
 using Auth.API.Application.Cells.UpdateCell;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -21,10 +21,10 @@ namespace Auth.API.Api.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(CellModelView), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(CellResponseDto), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
 
-        public async Task<IActionResult> CreateCell([FromBody] CreateCellRequest request)
+        public async Task<IActionResult> CreateCell([FromBody] CreateCellRequestDto request)
         {
             var result = await _mediator.Send(new CreateCellCommand(request));
 
@@ -34,7 +34,7 @@ namespace Auth.API.Api.Controllers
         [HttpPatch("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> UpdateCell([FromRoute] Guid id, [FromBody] UpdateCellRequest request)
+        public async Task<IActionResult> UpdateCell([FromRoute] Guid id, [FromBody] UpdateCellRequestDto request)
         {
             var result = await _mediator.Send(new UpdateCellCommand(id, request));
 
@@ -42,7 +42,7 @@ namespace Auth.API.Api.Controllers
         }
 
         [HttpGet("{id}", Name = "GetCellByGuid")]
-        [ProducesResponseType(typeof(CellModelView), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(CellResponseDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetCell(Guid id)
         {

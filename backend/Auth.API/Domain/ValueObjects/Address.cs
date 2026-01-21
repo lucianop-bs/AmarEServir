@@ -19,27 +19,27 @@ public record class Address(
         var resultValidation = ResultValidation.ValidateCollectErrors(
 
             () => string.IsNullOrWhiteSpace(Cep)
-                ? Result.Fail(UserErrors.Address.CepRequired)
+                ? Result.Fail(UserError.Address.CepRequired)
                 : Result.Ok(),
 
             () => string.IsNullOrWhiteSpace(Estado)
-                ? Result.Fail(UserErrors.Address.EstadoRequired)
+                ? Result.Fail(UserError.Address.EstadoRequired)
                 : Result.Ok(),
 
             () => string.IsNullOrWhiteSpace(Rua)
-                ? Result.Fail(UserErrors.Address.RuaRequired)
+                ? Result.Fail(UserError.Address.RuaRequired)
                 : Result.Ok(),
 
             () => string.IsNullOrWhiteSpace(Numero)
-                ? Result.Fail(UserErrors.Address.NumeroRequired)
+                ? Result.Fail(UserError.Address.NumeroRequired)
                 : Result.Ok(),
 
             () => string.IsNullOrWhiteSpace(Bairro)
-                ? Result.Fail(UserErrors.Address.BairroRequired)
+                ? Result.Fail(UserError.Address.BairroRequired)
                 : Result.Ok(),
 
             () => string.IsNullOrWhiteSpace(Cidade)
-                ? Result.Fail(UserErrors.Address.CidadeRequired)
+                ? Result.Fail(UserError.Address.CidadeRequired)
                 : Result.Ok()
         );
 

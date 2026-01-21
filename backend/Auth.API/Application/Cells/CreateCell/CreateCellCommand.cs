@@ -1,9 +1,8 @@
 ﻿using AmarEServir.Core.Results.Base;
-using Auth.API.Application.Cells.Models;
+using Auth.API.Application.Cells.Dtos;
 using MediatR;
 
 namespace Auth.API.Application.Cells.CreateCell
 {
-    public record class CreateCellCommand(CreateCellRequest Cell) : IRequest<Result<CellModelView>>;
-    public record class CreateCellRequest(string? Name, Guid? LeaderId);
+    public record class CreateCellCommand(CreateCellRequestDto Cell) : IRequest<Result<CellResponseDto>>;
 }

@@ -10,8 +10,8 @@ namespace Auth.API.Application.Users.GetUserByGuid
         public GetUserByGuidQueryValidator()
         {
             RuleFor(x => x.Id)
-                .NotEmpty().WithMessage(UserErrors.Account.IdRequired.Message)
-                .WithErrorCode(UserErrors.Account.IdRequired.Code);
+                .NotEmpty().WithMessage(UserError.Account.IdRequired.Message)
+                .WithErrorCode(UserError.Account.IdRequired.Code);
 
         }
     }
