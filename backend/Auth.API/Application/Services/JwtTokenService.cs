@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace Auth.API.Application.Services
@@ -60,6 +61,15 @@ namespace Auth.API.Application.Services
             };
 
             return _tokenHandler.CreateToken(tokenDescriptor);
+        }
+
+        public string GenerateRefreshToken()
+        {
+            var randomNumber = new byte[32];
+            using var rng = RandomNumberGenerator.Create();
+            rng.GetBytes(randomNumber);
+
+            return Convert.ToBase64String(randomNumber);
         }
     }
 }

@@ -8,6 +8,7 @@ namespace Auth.API.Application.Auth.Login
     public record class LoginResponse(
         Guid Id,
         string Token,
+        string RefreshToken,
         int Time);
 
     public record class LoginRequest(

@@ -28,23 +28,40 @@ namespace Auth.API.Application.Auth.Login
             _jwtSettings = jwtSettings.Value;
         }
 
-        public async Task<Result<LoginResponse>> Handle(LoginCommand request, CancellationToken cancellationToken)
+        public async Task<Result<LoginResponse>> Handle(LoginCommand command, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetUserByEmail(request.Email);
+            // ✅ CORREÇÃO 1: Usamos .Request porque seu Command tem esse wrapper
+            var user = await _userRepository.GetUserByEmail(command.Request.Email);
+
             if (user == null)
             {
                 return Result<LoginResponse>.Fail(AuthErrors.InvalidCredentials);
             }
 
-            var isPasswordValid = BCrypt.Net.BCrypt.Verify(request.Password, user.Password);
+            // ✅ CORREÇÃO 2: Acessamos Password via .Request
+            var isPasswordValid = BCrypt.Net.BCrypt.Verify(command.Request.Password, user.Password);
 
             if (!isPasswordValid)
             {
                 return Result<LoginResponse>.Fail(AuthErrors.InvalidCredentials);
             }
-            var token = _jwtTokenService.GenerateToken(user);
 
-            var response = new LoginResponse(user.Id, token, _jwtSettings.ExpirationInMinutes * 60);
+            // 3. Gerar Tokens
+            var accessToken = _jwtTokenService.GenerateToken(user);
+            var refreshToken = _jwtTokenService.GenerateRefreshToken();
+
+            // 4. Salvar Refresh Token (Lembre-se de ter atualizado o User.cs e MongoDbMapping.cs!)
+            user.AddRefreshToken(refreshToken, daysToExpire: 7);
+            await _userRepository.Update(user);
+
+            // ✅ CORREÇÃO 3: Mapeamento para o seu LoginResponse (Guid, Token, RefreshToken, Time)
+            // Ordem do record: Id, Token, RefreshToken, Time
+            var response = new LoginResponse(
+                user.Id,
+                accessToken,
+                refreshToken,
+                _jwtSettings.ExpirationInMinutes * 60 // Converte para segundos (int)
+            );
 
             return Result<LoginResponse>.Ok(response);
         }

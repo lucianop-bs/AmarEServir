@@ -48,5 +48,15 @@ namespace Auth.API.Infrastructure.Persistence.Repositories
         {
             return _collection.Find(u => u.Email == email && u.Id != currentUserId).AnyAsync();
         }
+
+        public async Task<User?> GetUserByRefreshToken(string refreshToken)
+        {
+            var filter = Builders<User>.Filter.ElemMatch(
+                "refresh_tokens",
+                Builders<RefreshToken>.Filter.Eq(x => x.Token, refreshToken)
+            );
+
+            return await _collection.Find(filter).FirstOrDefaultAsync();
+        }
     }
 }
