@@ -13,5 +13,7 @@
         Task<User> GetUserByEmail(string? email);
 
         Task<bool> EmailExistsForAnotherUser(string? email, Guid? currentUserId);
+
+        Task<User?> GetUserByRefreshToken(string refreshToken);
     }
 }

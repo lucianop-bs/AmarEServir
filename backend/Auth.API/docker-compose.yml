@@ -24,7 +24,7 @@ services:
       - "8080:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      # Corrigido: Porta interna 27017 e nome da rede unificado
+      
       - MongoDbSettings__ConnectionString=mongodb://${MONGO_ROOT_USER}:${MONGO_ROOT_PASS}@mongodb:27017
       - MongoDbSettings__DatabaseName=${DATABASE_NAME}
       - JwtSettings__SecretKey=${JWT_SECRET_KEY}

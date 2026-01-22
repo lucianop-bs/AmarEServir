@@ -1,5 +1,6 @@
 ﻿using AmarEServir.Core.Results.Extensions;
 using Auth.API.Application.Auth.Login;
+using Auth.API.Application.Auth.Refresh;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,9 +23,19 @@ namespace Auth.API.Api.Controllers
         [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [AllowAnonymous]
-        public async Task<IActionResult> Login([FromBody] LoginCommand request)
+        public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
-            var result = await _mediator.Send(request);
+            var result = await _mediator.Send(new LoginCommand(request));
+
+            return result.ToApiResult().ToActionResult();
+        }
+
+        [HttpPost("refresh-token")]
+        [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenCommand command)
+        {
+            var result = await _mediator.Send(command);
 
             return result.ToApiResult().ToActionResult();
         }

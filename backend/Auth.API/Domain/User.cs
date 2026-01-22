@@ -15,6 +15,12 @@ namespace Auth.API.Domain
         public Address Address { get; private set; }
         public UserRole Role { get; private set; }
 
+        private List<RefreshToken> _refreshTokens = new();
+
+        public IReadOnlyCollection<RefreshToken> RefreshTokens => _refreshTokens.AsReadOnly();
+
+        public const int daysToExpireRefreshToken = 7;
+
         public User()
         { }
 
@@ -92,6 +98,49 @@ namespace Auth.API.Domain
         {
             Password = hashPassword;
             SetUpdatedAtDate(DateTime.UtcNow);
+        }
+
+        public void AddRefreshToken(string token, int daysToExpire = daysToExpireRefreshToken)
+        {
+
+            var refreshToken = new RefreshToken(token, DateTime.UtcNow.AddDays(daysToExpire));
+
+            _refreshTokens.RemoveAll(t => t.IsExpired);
+
+            while (_refreshTokens.Count >= 10)
+            {
+                _refreshTokens.RemoveAt(0);
+            }
+
+            _refreshTokens.Add(refreshToken);
+
+        }
+
+        public bool UseRefreshToken(string token)
+        {
+            var existingToken = _refreshTokens.SingleOrDefault(t => t.Token == token);
+
+            if (existingToken != null && existingToken.IsRevoked)
+            {
+                RevokeAllRefreshTokens();
+                return false;
+            }
+
+            if (existingToken == null || !existingToken.IsActive)
+            {
+                return false;
+            }
+
+            existingToken.Revoke();
+            return true;
+        }
+
+        public void RevokeAllRefreshTokens()
+        {
+            foreach (var token in _refreshTokens)
+            {
+                token.Revoke();
+            }
         }
     }
 }

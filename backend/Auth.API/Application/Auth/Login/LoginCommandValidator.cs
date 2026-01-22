@@ -7,18 +7,18 @@ namespace Auth.API.Application.Auth.Login
     {
         public LoginCommandValidator()
         {
-            RuleFor(x => x.Email)
+            RuleFor(x => x.Request.Email)
               .NotEmpty()
               .WithMessage(AuthErrors.EmailRequired.Message)
               .WithErrorCode(AuthErrors.EmailRequired.Code);
 
-            RuleFor(x => x.Email)
+            RuleFor(x => x.Request.Email)
              .EmailAddress()
              .WithMessage(AuthErrors.InvalidEmail.Message)
              .WithErrorCode(AuthErrors.InvalidEmail.Code)
-             .When(x => !string.IsNullOrEmpty(x.Email)); ;
+             .When(x => !string.IsNullOrEmpty(x.Request.Email)); ;
 
-            RuleFor(x => x.Password)
+            RuleFor(x => x.Request.Password)
              .NotEmpty()
              .WithMessage(AuthErrors.PasswordRequired.Message)
              .WithErrorCode(AuthErrors.PasswordRequired.Code)
