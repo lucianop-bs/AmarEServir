@@ -99,6 +99,9 @@ namespace Auth.API.Domain
 
         public void AddRefreshToken(string token, int daysToExpire = 7)
         {
+            if (string.IsNullOrWhiteSpace(token))
+                throw new ArgumentException("Token cannot be null, empty or whitespace.", nameof(token));
+
             var refreshToken = new RefreshToken(token, DateTime.UtcNow.AddDays(daysToExpire));
 
             if (_refreshTokens.Count > 10)
