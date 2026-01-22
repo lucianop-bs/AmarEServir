@@ -22,9 +22,9 @@ namespace Auth.API.Api.Controllers
         [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [AllowAnonymous]
-        public async Task<IActionResult> Login([FromBody] LoginCommand request)
+        public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
-            var result = await _mediator.Send(request);
+            var result = await _mediator.Send(new LoginCommand(request));
 
             return result.ToApiResult().ToActionResult();
         }

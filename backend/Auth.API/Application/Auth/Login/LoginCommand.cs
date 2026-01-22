@@ -4,10 +4,13 @@ using MediatR;
 namespace Auth.API.Application.Auth.Login
 {
     public record class LoginCommand(
-        string Email,
-        string Password) : IRequest<Result<LoginResponse>>;
+        LoginRequest Request) : IRequest<Result<LoginResponse>>;
     public record class LoginResponse(
         Guid Id,
         string Token,
         int Time);
+
+    public record class LoginRequest(
+         string Email,
+         string Password);
 }
