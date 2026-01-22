@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace AmarEServir.Core.Json.Converter;
+namespace Auth.API.Application.Common.Validators;
 
 public class NullableGuidConverter : JsonConverter<Guid?>
 {
@@ -32,7 +32,7 @@ public class NullableGuidConverter : JsonConverter<Guid?>
     {
         if (value.HasValue)
         {
-            writer.WriteStringValue(value.Value);
+            writer.WriteStringValue(value.Value); 
         }
         else writer.WriteNullValue();
     }

@@ -25,7 +25,7 @@ namespace Auth.API.Application.Users.UpdateUser
             if (user is null)
                 return Result.Fail(UserErrors.Account.NotFound);
 
-            var userEmailAlreadyExists = await _userRepository.EmailExistsForAnotherUser(request.User.Email,request.Id);
+            var userEmailAlreadyExists = await _userRepository.EmailExistsForAnotherUser(request.User.Email, request.Id);
 
             if (userEmailAlreadyExists)
             {
@@ -40,7 +40,6 @@ namespace Auth.API.Application.Users.UpdateUser
                 request.User.Phone,
                 addressUpdate,
                 request.User.Role);
-           
 
             var validationUser = user.Validate();
             if (!validationUser.IsSuccess)

@@ -3,11 +3,12 @@ using AmarEServir.Core.Json.Converter;
 using AmarEServir.Core.Middlewares;
 using Auth.API.Application.Cells.CreateCell;
 using Auth.API.Application.Common;
-
+using Auth.API.Application.Services;
 using FluentValidation;
 
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.OpenApi.Models;
 using Scalar.AspNetCore;
 using System.Text.Json.Serialization;
 
@@ -23,6 +24,9 @@ public static class ApiConfig
         // 2. Injeção de Dependência: FluentValidation e MediatR
         builder.Services.AddValidatorsFromAssembly(applicationAssembly);
 
+        builder.Services.AddJwtAuthentication(builder.Configuration);
+        builder.Services.AddHttpContextAccessor();
+        builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
         builder.Services.AddMediatR(cfg =>
         {
             cfg.RegisterServicesFromAssembly(applicationAssembly);
@@ -65,8 +69,42 @@ public static class ApiConfig
             };
         });
 
-        // 5. Infraestrutura e Swagger
-        builder.Services.AddOpenApi();
+        builder.Services.AddOpenApi(options =>
+        {
+            options.AddDocumentTransformer((document, context, cancellationToken) =>
+            {
+                // Adiciona o esquema de segurança JWT Bearer
+                document.Components ??= new OpenApiComponents();
+                document.Components.SecuritySchemes ??= new Dictionary<string, OpenApiSecurityScheme>();
+
+                document.Components.SecuritySchemes["Bearer"] = new OpenApiSecurityScheme
+                {
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "bearer",
+                    BearerFormat = "JWT",
+                    Description = "Insira o token JWT no formato: {seu_token}"
+                };
+
+                // Aplica o esquema de segurança globalmente
+                document.SecurityRequirements ??= new List<OpenApiSecurityRequirement>();
+                document.SecurityRequirements.Add(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        Array.Empty<string>()
+                    }
+                });
+
+                return Task.CompletedTask;
+            });
+        });
         builder.Services.AddInfrastructure(builder.Configuration);
 
         builder.Services.AddCors(options =>
@@ -91,6 +129,7 @@ public static class ApiConfig
         app.UseExceptionHandler();
         app.UseHttpsRedirection();
         app.UseCors("Total");
+        app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
     }

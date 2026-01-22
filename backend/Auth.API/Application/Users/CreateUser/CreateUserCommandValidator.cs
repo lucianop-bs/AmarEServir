@@ -28,7 +28,7 @@ public class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>
             .WithMessage(UserErrors.Account.InvalidEmail.Message);
 
         RuleFor(x => x.User.Password)
-           
+
             .NotEmpty().WithErrorCode(UserErrors.Account.PasswordRequired.Code)
             .WithMessage(UserErrors.Account.PasswordRequired.Message)
             .MinimumLength(6).WithErrorCode(UserErrors.Account.WeakPassword.Code)

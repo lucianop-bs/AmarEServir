@@ -4,7 +4,7 @@ services:
     container_name: amar-e-servir-db
     restart: always
     environment:
-      # Corrigido: usando '=' para atribuição
+      
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USER}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASS}
     ports:
@@ -27,6 +27,8 @@ services:
       # Corrigido: Porta interna 27017 e nome da rede unificado
       - MongoDbSettings__ConnectionString=mongodb://${MONGO_ROOT_USER}:${MONGO_ROOT_PASS}@mongodb:27017
       - MongoDbSettings__DatabaseName=${DATABASE_NAME}
+      - JwtSettings__SecretKey=${JWT_SECRET_KEY}
+
     depends_on:
       - mongodb
     networks:

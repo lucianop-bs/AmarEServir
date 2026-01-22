@@ -14,7 +14,6 @@ namespace Auth.API.Domain
         public string Phone { get; private set; }
         public string Password { get; private set; }
         public Address Address { get; private set; }
-
         public UserRole Role { get; private set; }
         public User() { }
 
@@ -85,6 +84,12 @@ namespace Auth.API.Domain
             if (role != null)
                 Role = role.Value;
 
+            SetUpdatedAtDate(DateTime.UtcNow);
+        }
+
+        public void SetPassword(string hashPassword)
+        {
+            Password = hashPassword;
             SetUpdatedAtDate(DateTime.UtcNow);
         }
     }

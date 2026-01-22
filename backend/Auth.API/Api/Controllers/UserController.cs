@@ -11,6 +11,7 @@ namespace Auth.API.Api.Controllers
 {
     [Route("api/user")]
     [ApiController]
+
     public class UserController : ControllerBase
     {
         private readonly IMediator _mediator;

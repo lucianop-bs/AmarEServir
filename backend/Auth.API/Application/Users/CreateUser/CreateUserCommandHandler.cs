@@ -30,8 +30,8 @@ namespace Auth.API.Application.Users.CreateUser
             {
                 return Result<UserResponse>.Fail(UserErrors.Account.EmailAlreadyExists);
             }
-
-            var user = request.ToUser();
+            var hashPassword = BCrypt.Net.BCrypt.HashPassword(request.User.Password);
+            var user = request.ToUser(hashPassword);
 
             var userValidate = user.Validate();
 

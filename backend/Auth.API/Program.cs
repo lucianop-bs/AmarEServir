@@ -4,7 +4,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // 1. Configura os serviços e constrói o App
 var app = builder
-    .ConfigureApplicationServices() // Retorna o builder
+    .ConfigureApplicationServices()
+    // Retorna o builder
     .Build();                       // Transforma o builder em app
 
 // 2. Configura o pipeline de execução

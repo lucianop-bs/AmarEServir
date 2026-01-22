@@ -4,14 +4,14 @@ namespace Auth.API.Application.Users.CreateUser.Mappers
 {
     public static class CreateUserMapper
     {
-        public static User ToUser(this CreateUserCommand command)
+        public static User ToUser(this CreateUserCommand command, string hashPassword)
         {
 
             return new User(
                 command.User.Name,
                 command.User.Email,
                 command.User.Phone,
-                command.User.Password,
+                hashPassword,
                 command.User.Address.ToAddress(),
                 command.User.Role);
         }

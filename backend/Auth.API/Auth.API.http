@@ -4,22 +4,23 @@ POST {{Auth.API_HostAddress}}/api/user
 Content-Type: application/json
 Accept: application/json
 {
-  "name": "João da Silva",
-  "email": "joaoipccexemplo.com",
-  "password":"123321",
-  "phone": "61999999999",
+  "name": "Luciano Oliveira Borges Souza",
+  "email": "luciano@ipcc.com",
+  "phone": "61996100819",
+  "password": "123321",
+  "role": 2,
   "address": {
-    "rua": "Rua das Flores",
-    "quadra": "Q 10",
-    "numero": "15",
-    "bairro": "testandoo",
-    "cidade": "tesnadoo",
+    "rua": "Rua Amazonas",
+    "quadra": "Quadra 02",
+    "numero": "Lote 13",
+    "bairro": "Residencial Alto das Caraibas",
+    "cidade": "Luziania",
     "estado": "GO",
-    "complemento": "Apto 101",
-    "cep": "72800000"
-  },
-  "role": 1
+    "complemento": "Perto da SHIS",
+    "cep": "72813110"
+  }
 }
+
 ###
 PATCH {{Auth.API_HostAddress}}/api/user/d7b0e26b-b036-487f-8736-51f9e50208a3
 Content-Type: application/json
@@ -36,7 +37,7 @@ Accept: application/json
     "bairro": "testandoBairro",
     "cidade": "Luziânia", 
     "estado": "GO",
-    "complemento": "Apto 101",
+    "complemento": "Apto 200",
     "cep": "72813110"
   },
   "role": 2

@@ -1,6 +1,4 @@
-﻿using Auth.API.Application.Users.Common.Validators;
-using Auth.API.Application.Users.UpdateUser;
-using Auth.API.Domain.Errors;
+﻿using Auth.API.Domain.Errors;
 using FluentValidation;
 
 namespace Auth.API.Application.Users.UpdateUser;
