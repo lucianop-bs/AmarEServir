@@ -5,7 +5,6 @@ using MediatR;
 
 namespace Auth.API.Application.Cells.DeleteCell
 {
-
     public interface IDeleteCellCommandHandler : IRequestHandler<DeleteCellCommand, Result>
     {
     };
@@ -14,6 +13,7 @@ namespace Auth.API.Application.Cells.DeleteCell
 
     {
         private readonly ICellRepository _cellRepository;
+
         public DeleteCellCommandHandler(ICellRepository cellRepository)
         {
             _cellRepository = cellRepository;
@@ -21,7 +21,6 @@ namespace Auth.API.Application.Cells.DeleteCell
 
         public async Task<Result> Handle(DeleteCellCommand request, CancellationToken cancellationToken)
         {
-
             var cell = await _cellRepository.GetCellByGuid(request.Id);
             if (cell is null)
             {
@@ -31,7 +30,6 @@ namespace Auth.API.Application.Cells.DeleteCell
             await _cellRepository.Delete(cell.Id);
 
             return Result.Ok();
-
         }
     }
 }

@@ -10,7 +10,6 @@ namespace Auth.API.Infrastructure.Persistence.Mapping
     {
         public static void Configure()
         {
-
             BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
 
             // 2. Pacote de Convenções
@@ -34,7 +33,6 @@ namespace Auth.API.Infrastructure.Persistence.Mapping
                 {
                     cm.AutoMap();
                     cm.MapIdProperty(u => u.Id); // Define explicitamente qual campo é a Chave Primária
-
                 });
             }
 
@@ -48,7 +46,6 @@ namespace Auth.API.Infrastructure.Persistence.Mapping
                     .SetIsRequired(true);
 
                     cm.UnmapProperty(c => c.Members);
-
                 });
             }
         }

@@ -7,21 +7,19 @@ using MediatR;
 
 namespace Auth.API.Application.Users.CreateUser
 {
-
     public interface ICreateUserCommandHandler : IRequestHandler<CreateUserCommand, Result<UserResponse>>
     {
     }
+
     public class CreateUserCommandHandler : ICreateUserCommandHandler
     {
         private readonly IUserRepository _userRepository;
-        private readonly ICellRepository _cellRepository;
 
         public CreateUserCommandHandler(IUserRepository userRepository, ICellRepository cellRepository)
         {
             _userRepository = userRepository;
-
-            _cellRepository = cellRepository;
         }
+
         public async Task<Result<UserResponse>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
             var userEmailAlreadyExists = await _userRepository.GetUserByEmail(request.User.Email);
@@ -43,7 +41,6 @@ namespace Auth.API.Application.Users.CreateUser
             var response = user.ToResponse();
 
             return Result<UserResponse>.Ok(response);
-
         }
     }
 }

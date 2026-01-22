@@ -4,7 +4,9 @@ namespace AmarEServir.Core.Results.Base
 {
     public class Result : ResultBase
     {
-        protected Result() { }
+        protected Result()
+        { }
+
         protected Result(IError error)
         {
             AddError(error);
@@ -90,4 +92,3 @@ namespace AmarEServir.Core.Results.Base
         }
     }
 }
-

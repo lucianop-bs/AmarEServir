@@ -18,12 +18,9 @@ public static class ApiConfig
 {
     public static WebApplicationBuilder ConfigureApplicationServices(this WebApplicationBuilder builder)
     {
-        // 1. APONTAMENTO DE ASSEMBLY 
         var applicationAssembly = typeof(CreateCellCommand).Assembly;
 
-        // 2. Injeção de Dependência: FluentValidation e MediatR
         builder.Services.AddValidatorsFromAssembly(applicationAssembly);
-
         builder.Services.AddJwtAuthentication(builder.Configuration);
         builder.Services.AddHttpContextAccessor();
         builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
@@ -33,33 +30,26 @@ public static class ApiConfig
             cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         });
 
-        // 3. Tratamento de Exceções Global
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
         builder.Services.AddProblemDetails();
-
-        // 4. Configuração de Controllers e JSON
         builder.Services.AddControllers(options =>
         {
             options.Filters.Add<ApiResultFilter>();
         })
         .AddJsonOptions(options =>
         {
-            // Converte Enums (Admin -> "Admin")
             options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 
-            // RESOLVE O ERRO 500: Adiciona o conversor de Guid que criamos acima
             options.JsonSerializerOptions.Converters.Add(new NullableGuidConverter());
 
             options.JsonSerializerOptions.AllowTrailingCommas = true;
         })
         .ConfigureApiBehaviorOptions(options =>
         {
-            // Deixe em FALSE para que o ASP.NET use o Factory abaixo quando o Model estiver inválido
             options.SuppressModelStateInvalidFilter = false;
 
             options.InvalidModelStateResponseFactory = context =>
             {
-                // Pega a primeira mensagem de erro dos validadores
                 var errorMessage = context.ModelState.Values
                     .SelectMany(v => v.Errors)
                     .Select(e => e.ErrorMessage)
@@ -73,7 +63,6 @@ public static class ApiConfig
         {
             options.AddDocumentTransformer((document, context, cancellationToken) =>
             {
-                // Adiciona o esquema de segurança JWT Bearer
                 document.Components ??= new OpenApiComponents();
                 document.Components.SecuritySchemes ??= new Dictionary<string, OpenApiSecurityScheme>();
 
@@ -82,10 +71,9 @@ public static class ApiConfig
                     Type = SecuritySchemeType.Http,
                     Scheme = "bearer",
                     BearerFormat = "JWT",
-                    Description = "Insira o token JWT no formato: {seu_token}"
+                    Description = "Insira o token JWT no formato: seu_token"
                 };
 
-                // Aplica o esquema de segurança globalmente
                 document.SecurityRequirements ??= new List<OpenApiSecurityRequirement>();
                 document.SecurityRequirements.Add(new OpenApiSecurityRequirement
                 {

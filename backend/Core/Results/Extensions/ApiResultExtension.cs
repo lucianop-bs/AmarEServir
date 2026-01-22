@@ -31,7 +31,6 @@ public static class ApiResultExtensions
     {
         if (apiResult.Status >= 400)
         {
-
             var firstError = apiResult.Errors?.FirstOrDefault();
 
             return new ObjectResult(new
@@ -54,9 +53,9 @@ public static class ApiResultExtensions
 
         return new ObjectResult(data) { StatusCode = apiResult.Status };
     }
+
     public static ApiResult ToCreatedResult<TValue>(this IResultBase<TValue> result)
     {
-
         return result.ToApiResult(HttpStatusCode.Created);
     }
 

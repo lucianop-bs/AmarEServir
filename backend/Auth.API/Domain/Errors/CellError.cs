@@ -2,12 +2,13 @@
 
 namespace Auth.API.Domain.Errors
 {
-    public class CellError
+    public static class CellError
     {
         public static Error NameRequired => new(
             "Cell.NameRequired",
             "O nome da célula é obrigatório.",
             ErrorType.Validation);
+
         public static Error NotFound => new(
             "Cell.NotFound",
             "A Célula informada não foi encontrada.",
@@ -17,6 +18,7 @@ namespace Auth.API.Domain.Errors
             "Cell.LeaderInvalid",
             "O ID do líder informado é inválido.",
             ErrorType.Validation);
+
         public static Error InvalidNameLength => new(
             "Cell.InvalidNameLength",
             "O nome deve ter entre 3 e 50 caracteres.",
@@ -41,11 +43,10 @@ namespace Auth.API.Domain.Errors
             "Cell.NameAlreadyExists",
             "Já existe uma célula cadastrada com este nome.",
             ErrorType.Conflict);
+
         public static Error LeaderRoleRequired => new(
             "Cell.LeaderRoleRequired",
             "Somente usuários com perfil de Líder podem gerenciar uma célula.",
             ErrorType.Validation);
-
     }
 }
-

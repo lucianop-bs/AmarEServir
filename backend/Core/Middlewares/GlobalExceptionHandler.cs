@@ -18,12 +18,10 @@ public sealed class GlobalExceptionHandler : IExceptionHandler
         Exception exception,
         CancellationToken cancellationToken)
     {
-        // Log detalhado para o desenvolvedor (no console ou arquivo)
         _logger.LogError(exception, "Erro Crítico Capturado: {Message}", exception.Message);
 
         const int statusCode = StatusCodes.Status500InternalServerError;
 
-        // Retorno simplificado para o cliente/Swagger
         var response = new
         {
             status = statusCode,
@@ -32,10 +30,8 @@ public sealed class GlobalExceptionHandler : IExceptionHandler
 
         httpContext.Response.StatusCode = statusCode;
 
-        // Envia o JSON para o cliente
         await httpContext.Response.WriteAsJsonAsync(response, cancellationToken);
 
-        // Retornar 'true' avisa ao .NET que a exceção foi tratada com sucesso
         return true;
     }
 }

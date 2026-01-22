@@ -7,7 +7,6 @@ using MediatR;
 
 namespace Auth.API.Application.Cells.CreateCell
 {
-
     public class CreateCellCommandHandler : IRequestHandler<CreateCellCommand, Result<CellResponse>>
     {
         private readonly ICellRepository _cellRepository;
@@ -21,7 +20,6 @@ namespace Auth.API.Application.Cells.CreateCell
 
         public async Task<Result<CellResponse>> Handle(CreateCellCommand request, CancellationToken cancellationToken)
         {
-
             var user = await _userRepository.GetUserByGuid(request.Cell.LeaderId);
 
             if (user is null)
@@ -32,6 +30,11 @@ namespace Auth.API.Application.Cells.CreateCell
             if (await _cellRepository.LeaderExists(request.Cell.LeaderId))
             {
                 return Result<CellResponse>.Fail(CellError.AlreadyLeadingCell);
+            }
+
+            if (string.IsNullOrWhiteSpace(request.Cell.Name))
+            {
+                return Result<CellResponse>.Fail(CellError.NameRequired);
             }
 
             if (await _cellRepository.NameAlreadyExists(request.Cell.Name))

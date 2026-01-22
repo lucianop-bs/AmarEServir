@@ -8,6 +8,7 @@ namespace Auth.API.Infrastructure.Persistence.Repositories
     public class UserRepository : IUserRepository
     {
         private readonly IMongoCollection<User> _collection;
+
         public UserRepository(MongoContext context)
         {
             _collection = context.Database.GetCollection<User>("User");

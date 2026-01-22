@@ -23,7 +23,6 @@ namespace Auth.API.Api.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(CellResponse), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-
         public async Task<IActionResult> CreateCell([FromBody] CreateCellRequest request)
         {
             var result = await _mediator.Send(new CreateCellCommand(request));

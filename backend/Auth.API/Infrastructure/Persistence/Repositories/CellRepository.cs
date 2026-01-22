@@ -8,6 +8,7 @@ namespace Auth.API.Infrastructure.Persistence.Repositories
     public class CellRepository : ICellRepository
     {
         private readonly IMongoCollection<Cell> _collection;
+
         public CellRepository(MongoContext context)
         {
             _collection = context.Database.GetCollection<Cell>("Cell");

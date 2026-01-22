@@ -5,14 +5,15 @@ using MediatR;
 
 namespace Auth.API.Application.Cells.UpdateCell
 {
-
     public interface IUpdateCellCommandHandler
     : IRequestHandler<UpdateCellCommand, Result>
     { }
+
     public class UpdateCellCommandHandler : IUpdateCellCommandHandler
     {
         private readonly ICellRepository _cellRepository;
         private readonly IUserRepository _userRepository;
+
         public UpdateCellCommandHandler(ICellRepository cellRepository, IUserRepository userRepository)
         {
             _cellRepository = cellRepository;
@@ -21,7 +22,6 @@ namespace Auth.API.Application.Cells.UpdateCell
 
         public async Task<Result> Handle(UpdateCellCommand request, CancellationToken cancellationToken)
         {
-
             var cell = await _cellRepository.GetCellByGuid(request.Id);
 
             if (cell is null)
@@ -46,7 +46,6 @@ namespace Auth.API.Application.Cells.UpdateCell
 
             if (leaderIdRequest.HasValue && request.Cell.LeaderId != cell.LeaderId)
             {
-
                 if (await _cellRepository.LeaderExistsForAnotherCell(request.Cell.LeaderId, cell.Id))
                     return Result.Fail(CellError.AlreadyLeadingCell);
             }
@@ -62,7 +61,6 @@ namespace Auth.API.Application.Cells.UpdateCell
             await _cellRepository.Update(cell);
 
             return Result.Ok();
-
         }
     }
 }

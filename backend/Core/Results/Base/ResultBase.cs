@@ -13,6 +13,7 @@ namespace AmarEServir.Core.Results.Base
     {
         TValue Value { get; }
     }
+
     public abstract class ResultBase : IResultBase
     {
         private readonly List<IError> _errors = new();

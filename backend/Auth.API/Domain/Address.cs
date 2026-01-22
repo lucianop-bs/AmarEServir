@@ -53,14 +53,30 @@ public record class Address(
     {
         return this with
         {
-            Rua = !string.IsNullOrWhiteSpace(newValues.Rua) ? newValues.Rua : this.Rua,
-            Quadra = !string.IsNullOrWhiteSpace(newValues.Quadra) ? newValues.Quadra : this.Quadra,
-            Numero = !string.IsNullOrWhiteSpace(newValues.Numero) ? newValues.Numero : this.Numero,
-            Bairro = !string.IsNullOrWhiteSpace(newValues.Bairro) ? newValues.Bairro : this.Bairro,
-            Cidade = !string.IsNullOrWhiteSpace(newValues.Cidade) ? newValues.Cidade : this.Cidade,
-            Estado = !string.IsNullOrWhiteSpace(newValues.Estado) ? newValues.Estado : this.Estado,
-            Complemento = !string.IsNullOrWhiteSpace(newValues.Complemento) ? newValues.Complemento : this.Complemento,
-            Cep = !string.IsNullOrWhiteSpace(newValues.Cep) ? newValues.Cep : this.Cep
+            Rua = !string.IsNullOrWhiteSpace(newValues.Rua)
+            ? newValues.Rua
+            : this.Rua,
+            Quadra = !string.IsNullOrWhiteSpace(newValues.Quadra)
+            ? newValues.Quadra
+            : this.Quadra,
+            Numero = !string.IsNullOrWhiteSpace(newValues.Numero)
+            ? newValues.Numero
+            : this.Numero,
+            Bairro = !string.IsNullOrWhiteSpace(newValues.Bairro)
+            ? newValues.Bairro
+            : this.Bairro,
+            Cidade = !string.IsNullOrWhiteSpace(newValues.Cidade)
+            ? newValues.Cidade
+            : this.Cidade,
+            Estado = !string.IsNullOrWhiteSpace(newValues.Estado)
+            ? newValues.Estado
+            : this.Estado,
+            Complemento = !string.IsNullOrWhiteSpace(newValues.Complemento)
+            ? newValues.Complemento
+            : this.Complemento,
+            Cep = !string.IsNullOrWhiteSpace(newValues.Cep)
+            ? newValues.Cep
+            : this.Cep
         };
     }
 }

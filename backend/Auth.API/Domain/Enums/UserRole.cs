@@ -6,5 +6,4 @@ public enum UserRole
     Leader = 2,
     Volunteer = 3,
     Beneficiary = 4,
-
 }

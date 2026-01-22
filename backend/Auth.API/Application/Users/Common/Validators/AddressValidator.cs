@@ -8,7 +8,6 @@ public class AddressValidator : AbstractValidator<AddressRequest>
 {
     public AddressValidator()
     {
-
         RuleFor(x => x.Cep)
             .NotEmpty().WithErrorCode(UserErrors.Address.CepRequired.Code).WithMessage(UserErrors.Address.CepRequired.Message)
             .Matches(@"^\d{8}$").WithErrorCode(UserErrors.Address.CepFormat.Code).WithMessage(UserErrors.Address.CepFormat.Message);

@@ -33,7 +33,6 @@ namespace Auth.API.Api.Controllers
         [Authorize]
         public IActionResult Me()
         {
-
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
                       ?? User.FindFirst("sub")?.Value;
 
@@ -56,4 +55,3 @@ namespace Auth.API.Api.Controllers
         }
     }
 }
-

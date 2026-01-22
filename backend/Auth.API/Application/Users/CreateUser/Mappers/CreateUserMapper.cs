@@ -6,7 +6,6 @@ namespace Auth.API.Application.Users.CreateUser.Mappers
     {
         public static User ToUser(this CreateUserCommand command, string hashPassword)
         {
-
             return new User(
                 command.User.Name,
                 command.User.Email,
@@ -31,4 +30,3 @@ namespace Auth.API.Application.Users.CreateUser.Mappers
         }
     }
 }
-

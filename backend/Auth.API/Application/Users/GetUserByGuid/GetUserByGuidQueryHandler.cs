@@ -6,10 +6,10 @@ using MediatR;
 
 namespace Auth.API.Application.Users.GetUserByGuid
 {
-
     public interface IGetUserByGuidQueryHandler : IRequestHandler<GetUserByGuidQuery, Result<UserResponse>>
     {
     }
+
     public class GetUserByGuidQueryHandler : IGetUserByGuidQueryHandler
     {
         private readonly IUserRepository _userRepository;
@@ -26,10 +26,8 @@ namespace Auth.API.Application.Users.GetUserByGuid
             if (user is null)
             {
                 return Result<UserResponse>.Fail(UserErrors.Account.NotFound);
-
             }
             return Result<UserResponse>.Ok(user.ToResponse());
-
         }
     }
 }

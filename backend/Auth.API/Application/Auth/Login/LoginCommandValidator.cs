@@ -13,18 +13,18 @@ namespace Auth.API.Application.Auth.Login
               .WithErrorCode(AuthErrors.EmailRequired.Code);
 
             RuleFor(x => x.Email)
-             .EmailAddress().WithMessage(AuthErrors.InvalidEmail.Message)
+             .EmailAddress()
+             .WithMessage(AuthErrors.InvalidEmail.Message)
              .WithErrorCode(AuthErrors.InvalidEmail.Code)
              .When(x => !string.IsNullOrEmpty(x.Email)); ;
 
             RuleFor(x => x.Password)
-                .NotEmpty()
-                .WithMessage(AuthErrors.PasswordRequired.Message)
-                .WithErrorCode(AuthErrors.PasswordRequired.Code)
-                .MinimumLength(6)
-                .WithMessage(AuthErrors.WeakPassword.Message)
-                .WithErrorCode(AuthErrors.WeakPassword.Code);
-
+             .NotEmpty()
+             .WithMessage(AuthErrors.PasswordRequired.Message)
+             .WithErrorCode(AuthErrors.PasswordRequired.Code)
+             .MinimumLength(6)
+             .WithMessage(AuthErrors.WeakPassword.Message)
+             .WithErrorCode(AuthErrors.WeakPassword.Code);
         }
     }
 }

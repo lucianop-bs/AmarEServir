@@ -6,20 +6,20 @@ using MediatR;
 
 namespace Auth.API.Application.Users.UpdateUser
 {
-
     public interface IUpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, Result>
     { }
+
     public class UpdateUserCommandHandler : IUpdateUserCommandHandler
     {
-
         private readonly IUserRepository _userRepository;
+
         public UpdateUserCommandHandler(IUserRepository userRepository)
         {
             _userRepository = userRepository;
         }
+
         public async Task<Result> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
         {
-
             var user = await _userRepository.GetUserByGuid(request.Id);
 
             if (user is null)

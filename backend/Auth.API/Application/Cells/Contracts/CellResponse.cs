@@ -4,7 +4,12 @@ using Auth.API.Domain;
 
 namespace Auth.API.Application.Cells.Contracts
 {
-    public record class CellResponse(Guid Id, string Name, string LeaderId, List<UserResponse> Members);
+    public record class CellResponse(
+        Guid Id,
+        string Name,
+        Guid? LeaderId,
+        List<UserResponse> Members
+        );
 
     public static class CellModelViewExtension
     {
@@ -13,9 +18,8 @@ namespace Auth.API.Application.Cells.Contracts
             return new CellResponse(
                 cell.Id,
                 cell.Name,
-                cell.LeaderId.ToString(),
+                cell.LeaderId,
                 cell.Members?.Select(user => user.ToResponse()).ToList() ?? []
-
                 );
         }
     }

@@ -11,7 +11,6 @@ namespace Auth.API.Api.Controllers
 {
     [Route("api/user")]
     [ApiController]
-
     public class UserController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -24,13 +23,11 @@ namespace Auth.API.Api.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(UserResponse), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-
         public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest request)
         {
             var result = await _mediator.Send(new CreateUserCommand(request));
 
             return CreatedAtAction(nameof(GetUser), new { id = result.IsSuccess ? result.Value.Id : Guid.Empty }, result);
-
         }
 
         [HttpPatch("{id}")]

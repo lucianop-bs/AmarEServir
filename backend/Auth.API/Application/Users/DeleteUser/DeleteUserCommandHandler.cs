@@ -23,7 +23,6 @@ namespace Auth.API.Application.Users.DeleteUser
             if (user is null)
             {
                 return Result.Fail(UserErrors.Account.NotFound);
-
             }
 
             await _userRepository.Delete(user.Id);

@@ -10,7 +10,9 @@ public interface IApiResult
     int Status { get; }
     IReadOnlyList<ApiError> Errors { get; }
     IReadOnlyList<ApiInfo> Infos { get; }
+
     IApiResult AddError(ApiError error);
+
     IApiResult AddInfo(ApiInfo info);
 }
 
@@ -86,6 +88,7 @@ public class ApiResult<TValue> : ApiResult
 {
     // Esta é a propriedade que o ToActionResult procura via Reflexão
     public TValue? Data => _value;
+
     protected readonly TValue? _value;
 
     public ApiResult(IResultBase<TValue> result, HttpStatusCode statusCode)

@@ -12,6 +12,7 @@ public interface IGetCellByGuidQueryHandler : IRequestHandler<GetCellByGuidQuery
 public class GetCellByGuidQueryHandler : IGetCellByGuidQueryHandler
 {
     private readonly ICellRepository _cellRepository;
+
     public GetCellByGuidQueryHandler(ICellRepository cellRepository)
     {
         _cellRepository = cellRepository;
@@ -19,7 +20,6 @@ public class GetCellByGuidQueryHandler : IGetCellByGuidQueryHandler
 
     public async Task<Result<CellResponse>> Handle(GetCellByGuidQuery request, CancellationToken cancellationToken)
     {
-
         var cell = await _cellRepository.GetCellByGuid(request.Id);
 
         if (cell is null)
@@ -31,7 +31,5 @@ public class GetCellByGuidQueryHandler : IGetCellByGuidQueryHandler
             return Result<CellResponse>.Fail(validacaoCell.Errors);
 
         return Result<CellResponse>.Ok(cell.ToResponse());
-
     }
 }
-

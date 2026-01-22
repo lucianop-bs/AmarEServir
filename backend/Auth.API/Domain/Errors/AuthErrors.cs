@@ -9,6 +9,7 @@ namespace Auth.API.Domain.Errors
             "Email ou senha inválidos.",
              ErrorType.Validation
           );
+
         public static Error EmailRequired => new(
             "Auth.EmailRequired",
             "Email deve ser preenchido.",
@@ -37,10 +38,12 @@ namespace Auth.API.Domain.Errors
             "Você precisa estar autenticado para acessar este recurso.",
             ErrorType.Unauthorized
         );
+
         public static Error PasswordRequired => new(
             "User.PasswordRequired",
             "A senha deve ser preenchida.",
             ErrorType.Validation);
+
         public static Error WeakPassword => new(
             "User.WeakPassword",
             "A senha deve ter pelo menos 6 caracteres.",

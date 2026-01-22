@@ -5,7 +5,6 @@ namespace AmarEServir.Core.Results.Extensions
 {
     public static class ResultValidation
     {
-
         public static Result ValidateFailFast(params Func<Result>[] validators)
         {
             foreach (var validator in validators)

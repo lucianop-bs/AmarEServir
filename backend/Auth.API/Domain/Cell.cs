@@ -13,7 +13,8 @@ namespace Auth.API.Domain
         public User Lider { get; private set; }
         public List<User> Members { get; private set; } = [];
 
-        public Cell() { }
+        public Cell()
+        { }
 
         public Cell(
             string name,
@@ -66,9 +67,9 @@ namespace Auth.API.Domain
 
             return Result<Cell>.Ok(cell);
         }
+
         public Result Update(string name, Guid? leaderId, User member)
         {
-
             if (string.IsNullOrWhiteSpace(name))
             {
                 return Result.Fail(CellError.NameRequired);
@@ -81,11 +82,9 @@ namespace Auth.API.Domain
 
             if (LeaderId != leaderId)
             {
-
                 RemoveMemberById(LeaderId);
                 LeaderId = leaderId;
                 AddMember(member);
-
             }
 
             Name = name;

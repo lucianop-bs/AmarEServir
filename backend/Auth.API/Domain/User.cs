@@ -8,14 +8,15 @@ namespace Auth.API.Domain
 {
     public class User : BaseEntity<Guid>
     {
-
         public string Name { get; private set; }
         public string Email { get; private set; }
         public string Phone { get; private set; }
         public string Password { get; private set; }
         public Address Address { get; private set; }
         public UserRole Role { get; private set; }
-        public User() { }
+
+        public User()
+        { }
 
         public User(
             string name,
@@ -94,4 +95,3 @@ namespace Auth.API.Domain
         }
     }
 }
-

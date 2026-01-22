@@ -1,8 +1,8 @@
-﻿
-using AmarEServir.Core.Results.Base;
+﻿using AmarEServir.Core.Results.Base;
 using AmarEServir.Core.Results.Errors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+
 namespace AmarEServir.Core.Results.Extensions;
 
 public static class ResultExtensions

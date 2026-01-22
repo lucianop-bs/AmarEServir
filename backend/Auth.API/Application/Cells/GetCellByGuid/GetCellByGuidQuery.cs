@@ -5,5 +5,4 @@ using MediatR;
 namespace Auth.API.Application.Cells.GetCellByGuid
 {
     public record class GetCellByGuidQuery(Guid Id) : IRequest<Result<CellResponse>>;
-
 }

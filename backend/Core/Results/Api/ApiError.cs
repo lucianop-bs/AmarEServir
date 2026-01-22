@@ -2,6 +2,5 @@
 {
     public sealed record ApiError(string Title, string Detail, int Status, string Type)
     {
-
     }
 }

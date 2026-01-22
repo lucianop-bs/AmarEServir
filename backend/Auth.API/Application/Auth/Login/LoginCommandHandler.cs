@@ -8,28 +8,10 @@ using Microsoft.Extensions.Options;
 
 namespace Auth.API.Application.Auth.Login
 {
-    /// <summary>
-    /// ═══════════════════════════════════════════════════════════════
-    /// HANDLER DO COMANDO DE LOGIN
-    /// ═══════════════════════════════════════════════════════════════
-    /// 
-    /// Aqui fica a LÓGICA DE NEGÓCIO do login.
-    /// 
-    /// RESPONSABILIDADES:
-    /// 1. Buscar usuário pelo email
-    /// 2. Verificar se a senha está correta
-    /// 3. Gerar o token JWT
-    /// 4. Retornar a resposta
-    /// 
-    /// INJEÇÃO DE DEPENDÊNCIA:
-    /// - IUserRepository: Para buscar usuário no banco
-    /// - IJwtTokenService: Para gerar o token
-    /// - IOptions<JwtSettings>: Para pegar tempo de expiração
-    /// 
-    /// </summary>
     public interface ILoginCommandHandler : IRequestHandler<LoginCommand, Result<LoginResponse>>
     {
     }
+
     public class LoginCommandHandler : ILoginCommandHandler
     {
         private readonly IUserRepository _userRepository;
@@ -65,7 +47,6 @@ namespace Auth.API.Application.Auth.Login
             var response = new LoginResponse(user.Id, token, _jwtSettings.ExpirationInMinutes * 60);
 
             return Result<LoginResponse>.Ok(response);
-
         }
     }
 }

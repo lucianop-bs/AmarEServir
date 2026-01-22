@@ -5,4 +5,3 @@ using MediatR;
 namespace Auth.API.Application.Users.GetUserByGuid;
 
 public record class GetUserByGuidQuery(Guid Id) : IRequest<Result<UserResponse>>;
-

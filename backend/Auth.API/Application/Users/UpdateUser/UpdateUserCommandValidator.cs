@@ -8,27 +8,31 @@ public class UpdateUserRequestValidator : AbstractValidator<UpdateUserRequest>
     public UpdateUserRequestValidator()
     {
         RuleFor(x => x.Name)
-            .Length(3, 50).WithErrorCode(UserErrors.Profile.NameLength.Code)
+            .Length(3, 50)
+            .WithErrorCode(UserErrors.Profile.NameLength.Code)
             .WithMessage(UserErrors.Profile.NameLength.Message)
             .When(x => !string.IsNullOrWhiteSpace(x.Name));
 
         RuleFor(x => x.Email)
-            .EmailAddress().WithErrorCode(UserErrors.Account.InvalidEmail.Code)
+            .EmailAddress()
+            .WithErrorCode(UserErrors.Account.InvalidEmail.Code)
             .WithMessage(UserErrors.Account.InvalidEmail.Message)
             .When(x => !string.IsNullOrWhiteSpace(x.Email));
 
         RuleFor(x => x.Phone)
-            .Length(11, 13).WithErrorCode(UserErrors.Profile.PhoneInvalid.Code)
+            .Length(11, 13)
+            .WithErrorCode(UserErrors.Profile.PhoneInvalid.Code)
             .WithMessage(UserErrors.Profile.PhoneInvalid.Message)
             .When(x => !string.IsNullOrWhiteSpace(x.Phone));
 
         RuleFor(x => x.Role)
-            .IsInEnum().WithErrorCode(UserErrors.Account.RoleInvalid.Code)
+            .IsInEnum()
+            .WithErrorCode(UserErrors.Account.RoleInvalid.Code)
             .WithMessage(UserErrors.Account.RoleInvalid.Message)
             .When(x => x.Role.HasValue);
 
         RuleFor(x => x.Address)
-            .SetValidator(new UpdateAddressValidator())
+            .SetValidator(new UpdateAddressValidator()!)
             .When(x => x.Address != null);
     }
 }
@@ -38,11 +42,13 @@ public class UpdateUserCommandValidator : AbstractValidator<UpdateUserCommand>
     public UpdateUserCommandValidator()
     {
         RuleFor(x => x.Id)
-            .NotEmpty().WithErrorCode(UserErrors.Account.IdRequired.Code)
+            .NotEmpty()
+            .WithErrorCode(UserErrors.Account.IdRequired.Code)
             .WithMessage(UserErrors.Account.IdRequired.Message);
 
         RuleFor(x => x.User)
-            .NotNull().WithMessage(UserErrors.Account.UpdateAccountRequired.Message)
+            .NotNull()
+            .WithMessage(UserErrors.Account.UpdateAccountRequired.Message)
             .WithErrorCode(UserErrors.Account.UpdateAccountRequired.Code)
             .SetValidator(new UpdateUserRequestValidator());
     }
