@@ -1,0 +1,474 @@
+{
+  "info": {
+    "name": "Amar & Servir API",
+    "description": "Collection completa da API Amar & Servir com scripts atualizados e corrigidos.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "amar-servir-api"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{access_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://localhost:7001",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refresh_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "user_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "cell_id",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "🔐 Authentication",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Salvar tokens automaticamente",
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    // Ajustado para estrutura plana (sem .value)",
+                  "    if (response.token) {",
+                  "        pm.environment.set('access_token', response.token);",
+                  "        pm.environment.set('refresh_token', response.refreshToken);",
+                  "        pm.environment.set('user_id', response.id);",
+                  "        console.log('✅ Tokens salvos automaticamente!');",
+                  "        console.log('🔑 Access Token: ' + response.token.substring(0, 20) + '...');",
+                  "    }",
+                  "}",
+                  "",
+                  "pm.test('Login realizado com sucesso', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.have.property('token');",
+                  "    pm.expect(response).to.have.property('refreshToken');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@amarservir.com.br\",\n  \"password\": \"Admin@123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Atualizar tokens automaticamente",
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.token) {",
+                  "        pm.environment.set('access_token', response.token);",
+                  "        if(response.refreshToken) {",
+                  "             pm.environment.set('refresh_token', response.refreshToken);",
+                  "        }",
+                  "        console.log('🔄 Tokens atualizados automaticamente!');",
+                  "    }",
+                  "}",
+                  "",
+                  "pm.test('Refresh token realizado com sucesso', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.have.property('token');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refresh_token}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/refresh-token",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "refresh-token"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Profile Info (Me)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/auth/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "👥 Users Management",
+      "item": [
+        {
+          "name": "Create User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Salvar ID do usuário criado",
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    // Assumindo estrutura direta igual ao login",
+                  "    if (response.id) {",
+                  "        pm.environment.set('created_user_id', response.id);",
+                  "        console.log('👤 Usuário criado com ID: ' + response.id);",
+                  "    }",
+                  "}",
+                  "",
+                  "pm.test('Usuário criado com sucesso', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.have.property('id');",
+                  "    pm.expect(response).to.have.property('email');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"João Silva Santos\",\n  \"email\": \"joao.santos@example.com\",\n  \"phone\": \"(11) 99999-8888\",\n  \"password\": \"MinhaSenh@123\",\n  \"role\": 1,\n  \"address\": {\n    \"rua\": \"Rua das Flores\",\n    \"quadra\": \"Q-15\",\n    \"numero\": \"123\",\n    \"bairro\": \"Jardim Paulista\",\n    \"cidade\": \"São Paulo\",\n    \"estado\": \"SP\",\n    \"complemento\": \"Apt 45\",\n    \"cep\": \"01234-567\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/user",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "user"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get User by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/user/{{created_user_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "user",
+                "{{created_user_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"João Silva Santos Jr.\",\n  \"phone\": \"(11) 98888-7777\",\n  \"address\": {\n    \"rua\": \"Rua das Palmeiras\",\n    \"numero\": \"456\",\n    \"complemento\": \"Casa 2\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/user/{{created_user_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "user",
+                "{{created_user_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/user/{{created_user_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "user",
+                "{{created_user_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🏠 Cells Management",
+      "item": [
+        {
+          "name": "Create Cell",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Salvar ID da célula criada",
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.id) {",
+                  "        pm.environment.set('created_cell_id', response.id);",
+                  "        console.log('🏠 Célula criada com ID: ' + response.id);",
+                  "    }",
+                  "}",
+                  "",
+                  "pm.test('Célula criada com sucesso', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.have.property('id');",
+                  "    pm.expect(response).to.have.property('name');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Célula Esperança\",\n  \"leaderId\": \"{{user_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/cells",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "cells"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Cell by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/cells/{{created_cell_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "cells",
+                "{{created_cell_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Cell",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Célula Esperança Renovada\",\n  \"leaderId\": \"{{user_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/cells/{{created_cell_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "cells",
+                "{{created_cell_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Cell",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/cells/{{created_cell_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "cells",
+                "{{created_cell_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Script global para verificar validade do token",
+          "const token = pm.environment.get('access_token');",
+          "if (token && token !== '') {",
+          "    try {",
+          "        const payload = JSON.parse(atob(token.split('.')[1]));",
+          "        const currentTime = Math.floor(Date.now() / 1000);",
+          "        const timeUntilExpiry = payload.exp - currentTime;",
+          "        if (timeUntilExpiry < 60) {",
+          "            console.log('⚠️ Token expirando em breve.');",
+          "        }",
+          "    } catch (e) {",
+          "        console.log('🔍 Token inválido ou não presente');",
+          "    }",
+          "}"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Logs globais",
+          "const statusCode = pm.response.code;",
+          "const method = pm.request.method;",
+          "const url = pm.request.url.toString();",
+          "console.log(`🌐 ${method} ${url} → ${statusCode}`);",
+          "if (statusCode === 401) {",
+          "    console.log('🔒 401: Não autorizado. Verifique seu token.');",
+          "}",
+          "console.log(`⏱️ Tempo: ${pm.response.responseTime}ms`);"
+        ]
+      }
+    }
+  ]
+}
