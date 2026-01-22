@@ -32,7 +32,16 @@ namespace Auth.API.Domain.Errors
             "Acesso negado. Você não tem permissão para acessar este recurso.",
             ErrorType.Unauthorized
         );
-
+        public static Error TokenRefreshRequired => new(
+          "Auth.TokenRefreshRequired",
+          "Nenhum usuario com refresh token encontrado.",
+          ErrorType.Unauthorized
+      );
+        public static Error TokenRefreshRevoked => new(
+        "Auth.TokenRefreshRevoked",
+        "Token revogado.",
+        ErrorType.Unauthorized
+    );
         public static Error NotAuthenticated => new(
             "Auth.NotAuthenticated",
             "Você precisa estar autenticado para acessar este recurso.",

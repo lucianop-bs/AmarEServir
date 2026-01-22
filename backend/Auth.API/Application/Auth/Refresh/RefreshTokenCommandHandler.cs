@@ -1,24 +1,25 @@
 ﻿using AmarEServir.Core.Results.Base;
 using Auth.API.Api.Configurations;
+using Auth.API.Application.Auth.Login;
 using Auth.API.Application.Services;
 using Auth.API.Domain.Contracts;
 using Auth.API.Domain.Errors;
 using MediatR;
 using Microsoft.Extensions.Options;
 
-namespace Auth.API.Application.Auth.Login
+namespace Auth.API.Application.Auth.Refresh
 {
-    public interface ILoginCommandHandler : IRequestHandler<LoginCommand, Result<LoginResponse>>
+    public interface IRefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, Result<LoginResponse>>
     {
     }
 
-    public class LoginCommandHandler : ILoginCommandHandler
+    public class RefreshTokenCommandHandler : IRefreshTokenCommandHandler
     {
         private readonly IUserRepository _userRepository;
         private readonly IJwtTokenService _jwtTokenService;
         private readonly JwtSettings _jwtSettings;
 
-        public LoginCommandHandler(
+        public RefreshTokenCommandHandler(
             IUserRepository userRepository,
             IJwtTokenService jwtTokenService,
             IOptions<JwtSettings> jwtSettings)
@@ -28,33 +29,34 @@ namespace Auth.API.Application.Auth.Login
             _jwtSettings = jwtSettings.Value;
         }
 
-        public async Task<Result<LoginResponse>> Handle(LoginCommand command, CancellationToken cancellationToken)
+        public async Task<Result<LoginResponse>> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
         {
-
-            var user = await _userRepository.GetUserByEmail(command.Request.Email);
+            var user = await _userRepository.GetUserByRefreshToken(request.RefreshToken);
 
             if (user == null)
             {
-                return Result<LoginResponse>.Fail(AuthErrors.InvalidCredentials);
+                return Result<LoginResponse>.Fail(AuthErrors.TokenRefreshRequired);
             }
 
-            var isPasswordValid = BCrypt.Net.BCrypt.Verify(command.Request.Password, user.Password);
+            var isSuccess = user.UseRefreshToken(request.RefreshToken);
 
-            if (!isPasswordValid)
+            if (!isSuccess)
             {
+                await _userRepository.Update(user);
                 return Result<LoginResponse>.Fail(AuthErrors.InvalidCredentials);
             }
 
-            var accessToken = _jwtTokenService.GenerateToken(user);
-            var refreshToken = _jwtTokenService.GenerateRefreshToken();
+            var newAccessToken = _jwtTokenService.GenerateToken(user);
+            var newRefreshToken = _jwtTokenService.GenerateRefreshToken();
 
-            user.AddRefreshToken(refreshToken, daysToExpire: 7);
+            user.AddRefreshToken(newRefreshToken);
+
             await _userRepository.Update(user);
 
             var response = new LoginResponse(
                 user.Id,
-                accessToken,
-                refreshToken,
+                newAccessToken,
+                newRefreshToken,
                 _jwtSettings.ExpirationInMinutes * 60
             );
 
