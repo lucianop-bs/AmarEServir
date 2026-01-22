@@ -35,7 +35,7 @@ namespace Auth.API.Application.Auth.Refresh
 
             if (user == null)
             {
-                return Result<LoginResponse>.Fail(AuthErrors.InvalidCredentials);
+                return Result<LoginResponse>.Fail(AuthErrors.TokenRefreshRequired);
             }
 
             var isSuccess = user.UseRefreshToken(request.RefreshToken);

@@ -30,7 +30,7 @@ namespace Auth.API.Application.Auth.Login
 
         public async Task<Result<LoginResponse>> Handle(LoginCommand command, CancellationToken cancellationToken)
         {
-            // ✅ CORREÇÃO 1: Usamos .Request porque seu Command tem esse wrapper
+
             var user = await _userRepository.GetUserByEmail(command.Request.Email);
 
             if (user == null)
@@ -38,7 +38,6 @@ namespace Auth.API.Application.Auth.Login
                 return Result<LoginResponse>.Fail(AuthErrors.InvalidCredentials);
             }
 
-            // ✅ CORREÇÃO 2: Acessamos Password via .Request
             var isPasswordValid = BCrypt.Net.BCrypt.Verify(command.Request.Password, user.Password);
 
             if (!isPasswordValid)
@@ -46,21 +45,17 @@ namespace Auth.API.Application.Auth.Login
                 return Result<LoginResponse>.Fail(AuthErrors.InvalidCredentials);
             }
 
-            // 3. Gerar Tokens
             var accessToken = _jwtTokenService.GenerateToken(user);
             var refreshToken = _jwtTokenService.GenerateRefreshToken();
 
-            // 4. Salvar Refresh Token (Lembre-se de ter atualizado o User.cs e MongoDbMapping.cs!)
             user.AddRefreshToken(refreshToken, daysToExpire: 7);
             await _userRepository.Update(user);
 
-            // ✅ CORREÇÃO 3: Mapeamento para o seu LoginResponse (Guid, Token, RefreshToken, Time)
-            // Ordem do record: Id, Token, RefreshToken, Time
             var response = new LoginResponse(
                 user.Id,
                 accessToken,
                 refreshToken,
-                _jwtSettings.ExpirationInMinutes * 60 // Converte para segundos (int)
+                _jwtSettings.ExpirationInMinutes * 60
             );
 
             return Result<LoginResponse>.Ok(response);

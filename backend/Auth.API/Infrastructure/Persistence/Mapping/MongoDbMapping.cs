@@ -1,5 +1,4 @@
-﻿using AmarEServir.Core.Entities;
-using Auth.API.Domain;
+﻿using Auth.API.Domain;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Conventions;
@@ -11,9 +10,14 @@ namespace Auth.API.Infrastructure.Persistence.Mapping
     {
         public static void Configure()
         {
+            // ✅ Force UTC para todas as datas
             BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
+            BsonSerializer.RegisterSerializer(new DateTimeSerializer(DateTimeKind.Utc));
+            BsonSerializer.RegisterSerializer(new DateTimeOffsetSerializer(BsonType.String));
 
-            // 2. Pacote de Convenções
+            // ✅ Serializer para DateTime nullable
+            BsonSerializer.RegisterSerializer(new NullableSerializer<DateTime>(new DateTimeSerializer(DateTimeKind.Utc)));
+
             var pack = new ConventionPack
             {
                 new CamelCaseElementNameConvention(),
@@ -30,27 +34,38 @@ namespace Auth.API.Infrastructure.Persistence.Mapping
 
         public static void RegisterClassMaps()
         {
-            // O mapeamento do RefreshToken deve vir antes
+
             if (!BsonClassMap.IsClassMapRegistered(typeof(RefreshToken)))
             {
                 BsonClassMap.RegisterClassMap<RefreshToken>(cm =>
                 {
                     cm.MapCreator(c => new RefreshToken());
 
-                    cm.MapMember(c => c.Token).SetElementName("token");
-                    cm.MapMember(c => c.Expires).SetElementName("expires");
-                    cm.MapMember(c => c.Created).SetElementName("created");
-                    cm.MapMember(c => c.Revoked).SetElementName("revoked");
+                    cm.MapMember(c => c.Token)
+                      .SetElementName("token")
+                      .SetIsRequired(false);
+
+                    cm.MapMember(c => c.Created)
+                      .SetElementName("created")
+                      .SetSerializer(new DateTimeSerializer(DateTimeKind.Utc))
+                      .SetIsRequired(true);
+
+                    cm.MapMember(c => c.Expires)
+                      .SetElementName("expires")
+                      .SetSerializer(new DateTimeSerializer(DateTimeKind.Utc))
+                      .SetIsRequired(true);
+
+                    cm.MapMember(c => c.Revoked)
+                      .SetElementName("revoked")
+                      .SetSerializer(new NullableSerializer<DateTime>(new DateTimeSerializer(DateTimeKind.Utc)))
+                      .SetIsRequired(false);
+
+                    cm.UnmapProperty(c => c.IsExpired);
+                    cm.UnmapProperty(c => c.IsRevoked);
+                    cm.UnmapProperty(c => c.IsActive);
                 });
             }
-            if (!BsonClassMap.IsClassMapRegistered(typeof(BaseEntity<Guid>)))
-            {
-                BsonClassMap.RegisterClassMap<BaseEntity<Guid>>(cm =>
-                {
-                    cm.AutoMap();
-                    cm.MapIdProperty(u => u.Id);
-                });
-            }
+
             if (!BsonClassMap.IsClassMapRegistered(typeof(User)))
             {
                 BsonClassMap.RegisterClassMap<User>(cm =>
@@ -66,7 +81,6 @@ namespace Auth.API.Infrastructure.Persistence.Mapping
                 BsonClassMap.RegisterClassMap<Cell>(cm =>
                 {
                     cm.AutoMap();
-
                     cm.MapMember(c => c.LeaderId).SetIsRequired(true);
                     cm.UnmapProperty(c => c.Members);
                 });

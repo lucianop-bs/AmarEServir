@@ -12,6 +12,9 @@ namespace Auth.API.Application.Services
 {
     public class JwtTokenService : IJwtTokenService
     {
+
+        private const int SizeBytes = 32;
+
         private readonly JwtSettings _jwtSettings;
 
         private readonly JsonWebTokenHandler _tokenHandler = new();
@@ -65,7 +68,7 @@ namespace Auth.API.Application.Services
 
         public string GenerateRefreshToken()
         {
-            var randomNumber = new byte[32];
+            var randomNumber = new byte[SizeBytes];
             using var rng = RandomNumberGenerator.Create();
             rng.GetBytes(randomNumber);
 
