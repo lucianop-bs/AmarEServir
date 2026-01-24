@@ -56,15 +56,13 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
             {
                 var resultValueType = typeof(TResponse).GetGenericArguments()[0];
 
-                // ✅ SOLUÇÃO: Buscar especificamente métodos genéricos
                 var failMethod = typeof(Result)
                     .GetMethods(BindingFlags.Public | BindingFlags.Static)
-                    .Where(m =>
+                    .FirstOrDefault(m =>
                         m.Name == nameof(Result.Fail) &&
-                        m.IsGenericMethodDefinition &&  // ← CRUCIAL: Só métodos genéricos
+                        m.IsGenericMethodDefinition &&
                         m.GetParameters().Length == 1 &&
-                        m.GetParameters()[0].ParameterType == typeof(IEnumerable<IError>))
-                    .FirstOrDefault();
+                        m.GetParameters()[0].ParameterType == typeof(IEnumerable<IError>));
 
                 if (failMethod != null)
                 {

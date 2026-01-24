@@ -5,6 +5,7 @@ using Auth.API.Application.Cells.DeleteCell;
 using Auth.API.Application.Cells.GetCellByGuid;
 using Auth.API.Application.Cells.UpdateCell;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Auth.API.Api.Controllers
@@ -23,6 +24,7 @@ namespace Auth.API.Api.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(CellResponse), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize("ManagementOnly")]
         public async Task<IActionResult> CreateCell([FromBody] CreateCellRequest request)
         {
             var result = await _mediator.Send(new CreateCellCommand(request));
@@ -33,6 +35,7 @@ namespace Auth.API.Api.Controllers
         [HttpPatch("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize("ManagementOnly")]
         public async Task<IActionResult> UpdateCell([FromRoute] Guid id, [FromBody] UpdateCellRequest request)
         {
             var result = await _mediator.Send(new UpdateCellCommand(id, request));
@@ -43,6 +46,7 @@ namespace Auth.API.Api.Controllers
         [HttpGet("{id}", Name = "GetCellByGuid")]
         [ProducesResponseType(typeof(CellResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize("ManagementOnly")]
         public async Task<IActionResult> GetCell(Guid id)
         {
             var result = await _mediator.Send(new GetCellByGuidQuery(id));
@@ -53,6 +57,7 @@ namespace Auth.API.Api.Controllers
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize("ManagementOnly")]
         public async Task<IActionResult> DeleteCell(Guid id)
         {
             var result = await _mediator.Send(new DeleteCellCommand(id));

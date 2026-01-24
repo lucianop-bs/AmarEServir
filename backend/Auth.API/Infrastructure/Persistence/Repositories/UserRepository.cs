@@ -1,4 +1,6 @@
-﻿using Auth.API.Domain;
+﻿using AmarEServir.Core.Common;
+using AmarEServir.Core.Extesions;
+using Auth.API.Domain;
 using Auth.API.Domain.Contracts;
 using Auth.API.Infrastructure.Persistence.Context;
 using MongoDB.Driver;
@@ -57,6 +59,18 @@ namespace Auth.API.Infrastructure.Persistence.Repositories
             );
 
             return await _collection.Find(filter).FirstOrDefaultAsync();
+        }
+
+        public async Task<PagedResult<User>> GetUsersByQueryAsync(int page, int pageSize, string? searchTerm = null)
+        {
+            var query = _collection.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                query = query.Where(u => u.Name.Contains(searchTerm) || u.Email.Contains(searchTerm));
+            }
+
+            return await query.ToPagedResultAsync(page, pageSize);
         }
     }
 }

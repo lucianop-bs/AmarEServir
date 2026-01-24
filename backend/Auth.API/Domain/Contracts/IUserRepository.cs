@@ -1,4 +1,6 @@
-﻿namespace Auth.API.Domain.Contracts
+﻿using AmarEServir.Core.Common;
+
+namespace Auth.API.Domain.Contracts
 {
     public interface IUserRepository
     {
@@ -15,5 +17,7 @@
         Task<bool> EmailExistsForAnotherUser(string? email, Guid? currentUserId);
 
         Task<User?> GetUserByRefreshToken(string refreshToken);
+
+        Task<PagedResult<User>> GetUsersByQueryAsync(int page, int pageSize, string? searchTerm = null);
     }
 }
