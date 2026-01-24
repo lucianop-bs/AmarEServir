@@ -102,7 +102,6 @@ namespace Auth.API.Domain
 
         public void AddRefreshToken(string token, int daysToExpire = daysToExpireRefreshToken)
         {
-
             var refreshToken = new RefreshToken(token, DateTime.UtcNow.AddDays(daysToExpire));
 
             _refreshTokens.RemoveAll(t => t.IsExpired);
@@ -113,7 +112,6 @@ namespace Auth.API.Domain
             }
 
             _refreshTokens.Add(refreshToken);
-
         }
 
         public bool UseRefreshToken(string token)

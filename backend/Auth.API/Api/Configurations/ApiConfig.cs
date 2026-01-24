@@ -1,6 +1,7 @@
 ﻿using AmarEServir.Core.Filters;
 using AmarEServir.Core.Json.Converter;
 using AmarEServir.Core.Middlewares;
+using AmarEServir.Core.Results.Api;
 using Auth.API.Application.Cells.CreateCell;
 using Auth.API.Application.Common;
 using Auth.API.Application.Services;
@@ -50,12 +51,22 @@ public static class ApiConfig
 
             options.InvalidModelStateResponseFactory = context =>
             {
-                var errorMessage = context.ModelState.Values
-                    .SelectMany(v => v.Errors)
-                    .Select(e => e.ErrorMessage)
-                    .FirstOrDefault() ?? "Dados de entrada inválidos.";
+                var apiErrors = context.ModelState
+                    .Where(ms => ms.Value?.Errors.Count > 0)
+                    .SelectMany(ms => ms.Value!.Errors.Select(error =>
+                        new ApiInfo(
+                            Code: "400",
+                            Message: error.ErrorMessage
 
-                return new BadRequestObjectResult(new { status = 400, message = errorMessage });
+                        )))
+                    .ToList();
+
+                var response = new
+                {
+                    errors = apiErrors
+                };
+
+                return new BadRequestObjectResult(response);
             };
         });
 

@@ -33,7 +33,7 @@ public class ApiResult : IApiResult
         if (result.Errors is not null)
         {
             _errors.AddRange(result.Errors.ToApiError());
-            // Ajusta o status para o erro mais grave encontrado
+
             Status = (_errors.Count > 0 ? _errors.MaxBy(e => e.Status)?.Status : Status) ?? Status;
         }
     }

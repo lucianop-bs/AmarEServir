@@ -31,13 +31,37 @@ public static class ApiResultExtensions
     {
         if (apiResult.Status >= 400)
         {
-            var firstError = apiResult.Errors?.FirstOrDefault();
+            var errors = apiResult.Errors;
+            if (errors?.Count == 1)
+            {
+                return new ObjectResult(new
+                {
+                    code = apiResult.Status,
 
+                    message = errors?.First().Detail
+                })
+                {
+                    StatusCode = apiResult.Status
+                };
+            }
+            else if (errors?.Count > 1)
+            {
+                return new ObjectResult(new
+                {
+                    errors = errors.Select(e => new
+                    {
+                        code = apiResult.Status,
+                        message = e.Detail
+                    }).ToArray()
+                })
+                {
+                    StatusCode = apiResult.Status
+                };
+            }
             return new ObjectResult(new
             {
-                status = apiResult.Status,
-
-                message = firstError?.Detail ?? "Ocorreu um erro inesperado."
+                code = apiResult.Status,
+                message = "Ocorreu um erro inesperado."
             })
             {
                 StatusCode = apiResult.Status
@@ -57,25 +81,6 @@ public static class ApiResultExtensions
     public static ApiResult ToCreatedResult<TValue>(this IResultBase<TValue> result)
     {
         return result.ToApiResult(HttpStatusCode.Created);
-    }
-
-    public static IResult ToResult(this IApiResult apiResult)
-    {
-        if (apiResult.Status >= 400)
-        {
-            var firstError = apiResult.Errors?.FirstOrDefault();
-            return Microsoft.AspNetCore.Http.Results.Json(new
-            {
-                status = apiResult.Status,
-                message = firstError?.Detail ?? "Erro inesperado."
-            }, statusCode: apiResult.Status);
-        }
-
-        if (apiResult.Status == StatusCodes.Status204NoContent)
-            return Microsoft.AspNetCore.Http.Results.NoContent();
-
-        var data = apiResult.GetType().GetProperty("Data")?.GetValue(apiResult);
-        return Microsoft.AspNetCore.Http.Results.Json(data, statusCode: apiResult.Status);
     }
 
     private static int GetStatusCode(IError error)

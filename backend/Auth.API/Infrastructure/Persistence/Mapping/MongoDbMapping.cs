@@ -34,7 +34,6 @@ namespace Auth.API.Infrastructure.Persistence.Mapping
 
         public static void RegisterClassMaps()
         {
-
             if (!BsonClassMap.IsClassMapRegistered(typeof(RefreshToken)))
             {
                 BsonClassMap.RegisterClassMap<RefreshToken>(cm =>

@@ -12,7 +12,6 @@ namespace Auth.API.Application.Services
 {
     public class JwtTokenService : IJwtTokenService
     {
-
         private const int SizeBytes = 32;
 
         private readonly JwtSettings _jwtSettings;

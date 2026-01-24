@@ -30,7 +30,6 @@ namespace Auth.API.Application.Auth.Login
 
         public async Task<Result<LoginResponse>> Handle(LoginCommand command, CancellationToken cancellationToken)
         {
-
             var user = await _userRepository.GetUserByEmail(command.Request.Email);
 
             if (user == null)

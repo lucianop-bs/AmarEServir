@@ -27,7 +27,7 @@ namespace Auth.API.Api.Controllers
         {
             var result = await _mediator.Send(new CreateUserCommand(request));
 
-            return CreatedAtAction(nameof(GetUser), new { id = result.IsSuccess ? result.Value.Id : Guid.Empty }, result);
+            return result.ToApiResult(System.Net.HttpStatusCode.Created).ToActionResult();
         }
 
         [HttpPatch("{id}")]

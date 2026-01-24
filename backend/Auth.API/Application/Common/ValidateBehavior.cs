@@ -18,9 +18,9 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
     }
 
     public async Task<TResponse> Handle(
-        TRequest request,
-        RequestHandlerDelegate<TResponse> next,
-        CancellationToken cancellationToken)
+    TRequest request,
+    RequestHandlerDelegate<TResponse> next,
+    CancellationToken cancellationToken)
     {
         if (!_validators.Any())
         {
@@ -41,7 +41,7 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
         {
             var errors = failures
                 .Select(f => new Error(
-                    f.ErrorCode,
+                    f.ErrorCode ?? "VALIDATION_ERROR",
                     f.ErrorMessage,
                     ErrorType.Validation))
                 .ToList();
@@ -51,19 +51,20 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
                 return (Result.Fail(errors) as TResponse)!;
             }
 
-            if (typeof(TResponse).IsGenericType && typeof(TResponse).GetGenericTypeDefinition() == typeof(Result<>))
+            if (typeof(TResponse).IsGenericType &&
+                typeof(TResponse).GetGenericTypeDefinition() == typeof(Result<>))
             {
                 var resultValueType = typeof(TResponse).GetGenericArguments()[0];
 
+                // ✅ SOLUÇÃO: Buscar especificamente métodos genéricos
                 var failMethod = typeof(Result)
                     .GetMethods(BindingFlags.Public | BindingFlags.Static)
-                    .FirstOrDefault(m =>
+                    .Where(m =>
                         m.Name == nameof(Result.Fail) &&
-                        m.IsGenericMethod &&
+                        m.IsGenericMethodDefinition &&  // ← CRUCIAL: Só métodos genéricos
                         m.GetParameters().Length == 1 &&
-
-                        m.GetParameters()[0].ParameterType.IsAssignableFrom(typeof(List<Error>))
-                    );
+                        m.GetParameters()[0].ParameterType == typeof(IEnumerable<IError>))
+                    .FirstOrDefault();
 
                 if (failMethod != null)
                 {
@@ -72,10 +73,12 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
                     return (result as TResponse)!;
                 }
 
-                throw new InvalidOperationException($"O comando {typeof(TRequest).Name} precisa retornar Result ou Result<T> para usar a validação automática.");
+                throw new InvalidOperationException(
+                    $"ValidationBehavior: Não foi possível criar Result<{resultValueType.Name}> com erros de validação.");
             }
 
-            throw new InvalidOperationException("Comando com erro de validação não retorna um tipo Result suportado.");
+            throw new InvalidOperationException(
+                $"ValidationBehavior: Tipo '{typeof(TResponse).Name}' não suportado. Use Result ou Result<T>.");
         }
 
         return await next();
