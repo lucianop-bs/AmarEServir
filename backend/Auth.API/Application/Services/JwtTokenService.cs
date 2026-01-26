@@ -1,4 +1,4 @@
-﻿using Auth.API.Api.Configurations;
+﻿using Auth.API.Api.Configuration;
 using Auth.API.Domain;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;

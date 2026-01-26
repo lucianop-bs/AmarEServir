@@ -1,10 +1,10 @@
 ﻿using AmarEServir.Core.Results.Extensions;
-using Auth.API.Application.Users.CreateUser;
-using Auth.API.Application.Users.DeleteUser;
-using Auth.API.Application.Users.GetUserByGuid;
-using Auth.API.Application.Users.GetUsersByQuery;
-using Auth.API.Application.Users.Models;
-using Auth.API.Application.Users.UpdateUser;
+using Auth.API.Application.Common.Models;
+using Auth.API.Application.Users.Commands.CreateUser;
+using Auth.API.Application.Users.Commands.DeleteUser;
+using Auth.API.Application.Users.Commands.UpdateUser;
+using Auth.API.Application.Users.Queries.GetUserByGuid;
+using Auth.API.Application.Users.Queries.GetUsersByQuery;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

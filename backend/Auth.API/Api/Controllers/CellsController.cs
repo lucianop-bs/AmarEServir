@@ -1,9 +1,9 @@
 ﻿using AmarEServir.Core.Results.Extensions;
-using Auth.API.Application.Cells.Contracts;
-using Auth.API.Application.Cells.CreateCell;
-using Auth.API.Application.Cells.DeleteCell;
-using Auth.API.Application.Cells.GetCellByGuid;
-using Auth.API.Application.Cells.UpdateCell;
+using Auth.API.Application.Cells.Commands.CreateCell;
+using Auth.API.Application.Cells.Commands.DeleteCell;
+using Auth.API.Application.Cells.Commands.UpdateCell;
+using Auth.API.Application.Cells.Queries.GetCellByGuid;
+using Auth.API.Application.Common.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

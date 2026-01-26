@@ -1,15 +1,14 @@
 ﻿using AmarEServir.Core.Results.Extensions;
-using Auth.API.Application.Auth.Login;
-using Auth.API.Application.Auth.Refresh;
+using Auth.API.Application.Auth.Commands.Login;
+using Auth.API.Application.Auth.Commands.Refresh;
+using Auth.API.Application.Auth.Queries.Me;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace Auth.API.Api.Controllers
 {
     [Route("api/auth")]
-    [ApiController]
     public class AuthController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -42,27 +41,11 @@ namespace Auth.API.Api.Controllers
 
         [HttpGet("me")]
         [Authorize]
-        public IActionResult Me()
+        public async Task<IActionResult> Me()
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                      ?? User.FindFirst("sub")?.Value;
+            var result = await _mediator.Send(new GetMeUserGuidQuery());
 
-            var userName = User.FindFirst(ClaimTypes.Name)?.Value
-                        ?? User.FindFirst("name")?.Value;
-
-            var userEmail = User.FindFirst(ClaimTypes.Email)?.Value
-                         ?? User.FindFirst("email")?.Value;
-
-            var userRole = User.FindFirst(ClaimTypes.Role)?.Value
-                        ?? User.FindFirst("role")?.Value;
-
-            return Ok(new
-            {
-                Id = userId,
-                Name = userName,
-                Email = userEmail,
-                Role = userRole
-            });
+            return result.ToApiResult().ToActionResult();
         }
     }
 }

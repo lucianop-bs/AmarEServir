@@ -9,19 +9,22 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Application\Cells\CreateCell\Hand\**" />
+    <Compile Remove="Application\Cells\Commands\CreateCell\Hand\**" />
     <Compile Remove="Application\Common\Validators\**" />
-    <Content Remove="Application\Cells\CreateCell\Hand\**" />
+    <Content Remove="Application\Cells\Commands\CreateCell\Hand\**" />
     <Content Remove="Application\Common\Validators\**" />
-    <EmbeddedResource Remove="Application\Cells\CreateCell\Hand\**" />
+    <EmbeddedResource Remove="Application\Cells\Commands\CreateCell\Hand\**" />
     <EmbeddedResource Remove="Application\Common\Validators\**" />
-    <None Remove="Application\Cells\CreateCell\Hand\**" />
+    <None Remove="Application\Cells\Commands\CreateCell\Hand\**" />
     <None Remove="Application\Common\Validators\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Api\Controllers\CellController.cs" />
-    <Compile Remove="Application\Cells\Contracts\UpdateCellInputModel.cs" />
+    <Compile Remove="Controllers\CellController.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Application\Common\Validators\AddressValidator.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -40,6 +43,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Core\AmarEServir.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Api\" />
   </ItemGroup>
 
 </Project>

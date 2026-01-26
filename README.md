@@ -1,389 +1,111 @@
-# Amar&Servir 🤝
+# Amar&Servir API 🤝
 
-API backend para o projeto **Amar & Servir**, desenvolvida em **.NET 9** seguindo os princípios de **Clean Architecture**, **Clean Code** e utilizando padrões modernos como **CQRS** com **MediatR** e **Result Pattern**.
+> API REST para gerenciamento de células comunitárias, desenvolvida com .NET 9, Clean Architecture e MongoDB.
 
----
-    
-## 📋 Índice
+## 📋 Sobre o Projeto
 
-- [Tecnologias](#tecnologias)
-- [Arquitetura](#arquitetura)
-  - [Clean Architecture](#clean-architecture)
-  - [CQRS com MediatR](#cqrs-com-mediatr)
-  - [Result Pattern](#result-pattern)
-  - [Validation Pipeline](#validation-pipeline)
-- [Estrutura do Projeto](#estrutura-do-projeto)
-- [Pré-requisitos](#pré-requisitos)
-- [Configuração do Ambiente](#configuração-do-ambiente)
-- [Como Executar](#como-executar)
-- [Endpoints da API](#endpoints-da-api)
-- [Validações](#validações)
-- [Exemplos de Requisições](#exemplos-de-requisições)
+Sistema para gestão de grupos comunitários (células), permitindo:
+
+- ✅ Autenticação JWT com refresh token
+- 👥 Gerenciamento de usuários (Admin, Líder, Voluntário, Beneficiário)
+- 🏠 Administração de células e seus membros
+- 🔒 Controle de acesso baseado em roles
 
 ---
 
-## 🚀 Tecnologias
+## 🚀 Início Rápido
 
-| Tecnologia | Descrição |
-|------------|-----------|
-| **.NET 9** | Framework principal |
-| **MongoDB** | Banco de dados NoSQL |
-| **MediatR** | Implementação do padrão CQRS |
-| **FluentValidation** | Validação declarativa |
-| **Docker** | Containerização |
-
----
-
-## 🏗️ Arquitetura
-
-### Clean Architecture
-
-O projeto segue os princípios da **Clean Architecture** (Arquitetura Limpa), garantindo:
-
-- ✅ **Independência de frameworks** - O domínio não depende de bibliotecas externas
-- ✅ **Testabilidade** - Regras de negócio testáveis isoladamente
-- ✅ **Independência de UI** - A API pode ser substituída sem alterar o domínio
-- ✅ **Independência de banco** - MongoDB pode ser trocado por outro banco
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                      API Layer                              │
-│                    (Controllers)                            │
-└─────────────────────────┬───────────────────────────────────┘
-                          │
-                          ▼
-┌─────────────────────────────────────────────────────────────┐
-│                  Application Layer                          │
-│         (Commands, Queries, Handlers, Validators)           │
-└─────────────────────────┬───────────────────────────────────┘
-                          │
-                          ▼
-┌─────────────────────────────────────────────────────────────┐
-│                    Domain Layer                             │
-│           (Entities, Contracts, Errors)                     │
-└─────────────────────────┬───────────────────────────────────┘
-                          │
-                          ▼
-┌─────────────────────────────────────────────────────────────┐
-│                 Infrastructure Layer                        │
-│              (Repositories, MongoDB)                        │
-└─────────────────────────────────────────────────────────────┘
-```
-
----
-
-### CQRS com MediatR
-
-O projeto utiliza o padrão **CQRS (Command Query Responsibility Segregation)** através do **MediatR**:
-
-#### Commands (Escrita)
-```csharp
-// Definição do Command
-public record DeleteCellCommand(Guid Id) : IRequest<Result>;
-
-// Handler que processa o Command
-public class DeleteCellCommandHandler : IRequestHandler<DeleteCellCommand, Result>
-{
-    public async Task<Result> Handle(DeleteCellCommand request, CancellationToken cancellationToken)
-    {
-        var cell = await _cellRepository.GetCellByGuid(request.Id);
-        if (cell is null)
-            return Result.Fail(CellError.NotFound);
-
-        await _cellRepository.Delete(cell.Id);
-        return Result.Ok();
-    }
-}
-```
-
-#### Queries (Leitura)
-```csharp
-public record GetUserByGuidQuery(Guid Id) : IRequest<Result<UserModelView>>;
-```
-
-#### Benefícios do CQRS + MediatR
-- 📦 **Desacoplamento** - Controllers não conhecem a implementação
-- 🔄 **Pipeline de comportamentos** - Validação automática antes dos handlers
-- 📊 **Separação clara** - Operações de leitura vs escrita bem definidas
-
----
-
-### Result Pattern
-
-O projeto implementa o **Result Pattern** para tratamento de erros de forma elegante, evitando exceções para fluxos de negócio:
-
-```csharp
-// Estrutura do Result
-public class Result : ResultBase
-{
-    public static Result Ok() => new();
-    public static Result Fail(IError error) => new(error);
-    public static Result<TValue> Ok<TValue>(TValue value) => Result<TValue>.Ok(value);
-}
-
-// Estrutura do Error
-public record Error(string Code, string Message, ErrorType Type) : IError;
-
-// Tipos de erro disponíveis
-public enum ErrorType
-{
-    Validation = 400,
-    Unauthorized = 401,
-    NotFound = 404,
-    Conflict = 409,
-    Internal = 500
-}
-```
-
-#### Uso nos Handlers
-```csharp
-// Retornando sucesso
-return Result.Ok(cellModelView);
-
-// Retornando erro
-return Result.Fail(CellError.NotFound);
-
-// Retornando múltiplos erros
-return Result.Fail(validationErrors);
-```
-
----
-
-### Validation Pipeline
-
-O **MediatR Pipeline** intercepta todas as requisições e executa validações automaticamente antes de chegarem aos handlers:
-
-```csharp
-public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-{
-    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
-    {
-        // 1. Executa todas as validações
-        var validationResults = await Task.WhenAll(
-            _validators.Select(v => v.ValidateAsync(context, cancellationToken))
-        );
-
-        // 2. Coleta os erros
-        var failures = validationResults.SelectMany(r => r.Errors).ToList();
-
-        // 3. Se houver erros, retorna Result.Fail
-        if (failures.Any())
-            return Result.Fail(errors);
-
-        // 4. Se não houver erros, continua para o Handler
-        return await next();
-    }
-}
-```
-
-#### Validators com FluentValidation
-```csharp
-public class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>
-{
-    public CreateUserCommandValidator()
-    {
-        RuleFor(x => x.Name)
-            .NotEmpty().WithErrorCode("USER.NAME_REQUIRED")
-            .Length(3, 50).WithErrorCode("USER.NAME_LENGTH");
-
-        RuleFor(x => x.Email)
-            .NotEmpty().EmailAddress();
-
-        RuleFor(x => x.Password)
-            .MinimumLength(6);
-    }
-}
-```
-
----
-
-## 📂 Estrutura do Projeto
-
-```
-backend/
-├── Auth.API/
-│   ├── Api/
-│   │   ├── Controllers/              # Endpoints da API
-│   │   │   ├── UserController.cs
-│   │   │   └── CellsController.cs
-│   │   └── Configurations/           # Configurações (DI, Swagger, etc)
-│   │
-│   ├── Application/                  # Casos de uso (CQRS)
-│   │   ├── Common/
-│   │   │   └── ValidateBehavior.cs   # Pipeline de validação
-│   │   ├── Users/
-│   │   │   ├── CreateUser/
-│   │   │   │   ├── CreateUserCommand.cs
-│   │   │   │   ├── CreateUserCommandHandler.cs
-│   │   │   │   ├── CreateUserCommandValidator.cs
-│   │   │   │   └── CreateUserMapper.cs
-│   │   │   ├── UpdateUser/
-│   │   │   ├── DeleteUser/
-│   │   │   └── GetUserByGuid/
-│   │   └── Cells/
-│   │       ├── CreateCell/
-│   │       ├── UpdateCell/
-│   │       ├── DeleteCell/
-│   │       └── GetCellByGuid/
-│   │
-│   ├── Domain/                       # Entidades e regras de negócio
-│   │   ├── User.cs
-│   │   ├── Cell.cs
-│   │   ├── Address.cs
-│   │   ├── Enums/
-│   │   │   └── UserRole.cs
-│   │   ├── Contracts/                # Interfaces dos repositórios
-│   │   │   ├── IUserRepository.cs
-│   │   │   └── ICellRepository.cs
-│   │   └── Errors/                   # Erros de domínio
-│   │       ├── UserErrors.cs
-│   │       └── CellErrors.cs
-│   │
-│   └── Infrastructure/               # Implementações externas
-│       └── Persistence/
-│           ├── Context/
-│           │   └── MongoContext.cs
-│           └── Repositories/
-│               ├── UserRepository.cs
-│               └── CellRepository.cs
-│
-└── Core/                             # Biblioteca compartilhada
-    ├── Entities/
-    │   └── BaseEntity.cs
-    ├── Results/
-    │   ├── Base/
-    │   │   └── Result.cs             # Result Pattern
-    │   └── Errors/
-    │       ├── Error.cs
-    │       ├── IError.cs
-    │       └── ErrorType.cs
-    ├── Filters/
-    │   └── ApiResultFilter.cs
-    └── Middlewares/
-        └── GlobalExceptionHandler.cs
-```
-
----
-
-## 📦 Pré-requisitos
+### Pré-requisitos
 
 - [Docker](https://www.docker.com/get-started) e Docker Compose
-- [.NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0) (para desenvolvimento)
+- [.NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0) _(opcional, para desenvolvimento local)_
 
----
+### Execução com Docker
 
-## ⚙️ Configuração do Ambiente
-
-### 1. Clone o repositório
+1. **Clone o repositório**
 
 ```bash
-git clone https://github.com/lucianop-bs/AmarEServir.git
-cd AmarEServir
+git clone https://github.com/seu-usuario/AmarEServir.git
+cd AmarEServir/backend/Auth.API
 ```
 
-### 2. Configure as variáveis de ambiente
-
-Crie um arquivo `.env` na pasta `backend/Auth.API/` baseado no `example.env`:
+2. **Configure as variáveis de ambiente**
 
 ```bash
-cd backend/Auth.API
 cp example.env .env
 ```
 
 Edite o arquivo `.env`:
 
 ```env
-MONGO_ROOT_USER="admin"
-MONGO_ROOT_PASS="sua_senha_segura"
-DATABASE_NAME="amarservir_db"
+MONGO_ROOT_USER=admin
+MONGO_ROOT_PASS=suaSenhaSegura123
+DATABASE_NAME=AmarEServir
+JWT_SECRET_KEY=sua-chave-secreta-aqui
 ```
 
-| Variável | Descrição |
-|----------|-----------|
-| `MONGO_ROOT_USER` | Usuário root do MongoDB |
-| `MONGO_ROOT_PASS` | Senha do usuário root |
-| `DATABASE_NAME` | Nome do banco de dados |
-
----
-
-## ▶️ Como Executar
-
-### Com Docker (Recomendado)
+3. **Inicie os containers**
 
 ```bash
-cd backend/Auth.API
 docker-compose up -d
 ```
 
-🌐 API disponível em: `http://localhost:8080`
+4. **Acesse a API**
 
-### Desenvolvimento Local
+- **API**: http://localhost:8080
+- **Documentação Scalar**: http://localhost:8080/scalar/v1
 
-```bash
-cd backend/Auth.API
-dotnet restore
-dotnet run
+---
+
+## 📡 Endpoints Principais
+
+### 🔐 Autenticação
+
+| Método | Endpoint                  | Descrição               |
+| ------ | ------------------------- | ----------------------- |
+| `POST` | `/api/auth/login`         | Autenticação            |
+| `POST` | `/api/auth/refresh-token` | Renovar token           |
+| `GET`  | `/api/auth/me`            | Dados do usuário logado |
+
+**Exemplo - Login:**
+
+```json
+POST /api/auth/login
+{
+  "email": "admin@example.com",
+  "password": "senha123"
+}
+```
+
+**Resposta:**
+
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "token": "eyJhbGciOiJIUzI1NiIs...",
+  "refreshToken": "a1b2c3d4e5f6...",
+  "time": 300
+}
 ```
 
 ---
 
-## 📡 Endpoints da API
+### 👥 Usuários
 
-**Base URL:** `http://localhost:8080/api`
+| Método   | Endpoint         | Descrição       | Requer Token? |
+| -------- | ---------------- | --------------- | ------------- |
+| `POST`   | `/api/user`      | Criar usuário   | 🔓 Não        |
+| `GET`    | `/api/user/{id}` | Buscar por ID   | 🔒 Sim        |
+| `PATCH`  | `/api/user/{id}` | Atualizar dados | 🔒 Sim        |
+| `DELETE` | `/api/user/{id}` | Excluir usuário | 🔒 Sim        |
 
-### Usuários (`/api/user`)
+**Exemplo - Criar Usuário:**
 
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| `POST` | `/user` | Criar usuário |
-| `GET` | `/user/{id}` | Buscar por ID |
-| `PATCH` | `/user/{id}` | Atualizar |
-| `DELETE` | `/user/{id}` | Excluir |
-
-### Células (`/api/cells`)
-
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| `POST` | `/cells` | Criar célula |
-| `GET` | `/cells/{id}` | Buscar por ID |
-| `PATCH` | `/cells/{id}` | Atualizar |
-| `DELETE` | `/cells/{id}` | Excluir |
-
----
-
-## ✅ Validações
-
-### Usuário
-
-| Campo | Regras |
-|-------|--------|
-| `name` | Obrigatório, 3-50 caracteres |
-| `email` | Obrigatório, formato válido |
-| `phone` | Obrigatório, 11-13 caracteres |
-| `password` | Obrigatório, mínimo 6 caracteres |
-| `role` | Enum válido (1=Admin, 2=Leader, 3=Volunteer, 4=Beneficiary) ou ("Admin", "Leader", "Volunteer", "Beneficiary") |
-| `address` | Obrigatório (rua, numero, bairro, cidade, estado, cep) |
-
-### Célula
-
-| Campo | Regras |
-|-------|--------|
-| `name` | Obrigatório, 3-100 caracteres, Uma célula não pode ter o mesmo nome|
-| `leaderId` | GUID válido (não vazio), Um líder só pode ter uma célula |
-
----
-
-## 📝 Exemplos de Requisições
-
-### Criar Usuário
-
-```http
-POST http://localhost:8080/api/user
-Content-Type: application/json
-
+```json
+POST /api/user
 {
   "name": "João Silva",
-  "email": "joao@email.com",
+  "email": "joao@example.com",
   "phone": "11999998888",
   "password": "senha123",
   "role": 3,
@@ -400,68 +122,121 @@ Content-Type: application/json
 }
 ```
 
-### Resposta de Sucesso
+**Roles disponíveis:**
+
+- `1` - Admin
+- `2` - Leader (Líder)
+- `3` - Volunteer (Voluntário)
+- `4` - Beneficiary (Beneficiário)
+
+---
+
+### 🏠 Células
+
+| Método   | Endpoint          | Descrição        | Requer Token? |
+| -------- | ----------------- | ---------------- | ------------- |
+| `POST`   | `/api/cells`      | Criar célula     | 🔒 Sim        |
+| `GET`    | `/api/cells/{id}` | Buscar por ID    | 🔒 Sim        |
+| `PATCH`  | `/api/cells/{id}` | Atualizar célula | 🔒 Sim        |
+| `DELETE` | `/api/cells/{id}` | Excluir célula   | 🔒 Sim        |
+
+**Exemplo - Criar Célula:**
 
 ```json
-{
-  "isSuccess": true,
-  "value": {
-    "id": "550e8400-e29b-41d4-a716-446655440000",
-    "name": "João Silva",
-    "email": "joao@email.com",
-    "phone": "11999998888",
-    "role": 3,
-    "address": { ... }
-  }
-}
-```
-
-### Resposta de Erro (Validação)
-
-```json
-{
-  "isSuccess": false,
-  "errors": [
-    {
-      "code": "USER.NAME_REQUIRED",
-      "message": "O nome é obrigatório",
-      "type": 400
-    }
-  ]
-}
-```
-
-### Criar Célula
-
-```http
-POST http://localhost:8080/api/cells
-Content-Type: application/json
-
+POST /api/cells
 {
   "name": "Célula Esperança",
   "leaderId": "550e8400-e29b-41d4-a716-446655440000"
 }
 ```
 
-### Buscar Usuário
+**Regras:**
 
-```http
-GET http://localhost:8080/api/user/550e8400-e29b-41d4-a716-446655440000
+- ✅ Somente usuários com `role: 2` (Leader) podem liderar células
+- ✅ Um líder pode ter apenas uma célula
+- ✅ Nomes de células devem ser únicos
+
+---
+
+## 🔑 Autenticação nas Requisições
+
+Após o login, use o token JWT no header `Authorization`:
+
+```
+Authorization: Bearer SEU_TOKEN_AQUI
 ```
 
-### Atualizar Usuário
+**Tokens:**
 
-```http
-PATCH http://localhost:8080/api/user/550e8400-e29b-41d4-a716-446655440000
-Content-Type: application/json
+- **Access Token**: Válido por 5 minutos (use nas requisições)
+- **Refresh Token**: Válido por 7 dias (use para renovar o access token)
 
+**Renovar token expirado:**
+
+```json
+POST /api/auth/refresh-token
 {
-  "name": "João Silva Atualizado",
-  "email": "joao.novo@email.com",
-  "phone": "11888887777",
+  "refreshToken": "SEU_REFRESH_TOKEN"
+}
+```
+
+---
+
+## 🏗️ Arquitetura
+
+```
+┌─────────────────────────────────────┐
+│  API Layer (Controllers)            │  → Recebe requisições HTTP
+├─────────────────────────────────────┤
+│  Application (CQRS + MediatR)       │  → Lógica de casos de uso
+│  • Commands (Criar/Atualizar)       │
+│  • Queries (Buscar)                 │
+│  • Validators (FluentValidation)    │
+├─────────────────────────────────────┤
+│  Domain (Entidades + Regras)        │  → Regras de negócio
+│  • User, Cell, Address              │
+│  • Validações de domínio            │
+├─────────────────────────────────────┤
+│  Infrastructure (MongoDB)           │  → Persistência de dados
+│  • Repositories                     │
+└─────────────────────────────────────┘
+```
+
+**Tecnologias:**
+
+- .NET 9 (ASP.NET Core)
+- MongoDB (NoSQL)
+- MediatR (CQRS)
+- FluentValidation
+- JWT Authentication
+- Docker
+
+---
+
+## 🧪 Testando a API
+
+### Opção 1: Postman/Insomnia
+
+Importe a collection disponível em `docs/AmarEServir.postman_collection.json`
+
+### Opção 2: Scalar UI
+
+Acesse http://localhost:8080/scalar para documentação interativa.
+
+### Fluxo de Teste Completo
+
+**1. Criar usuário líder:**
+
+```json
+POST /api/user
+{
+  "name": "Maria Santos",
+  "email": "maria@example.com",
+  "phone": "11988887777",
+  "password": "senha123",
   "role": 2,
   "address": {
-    "rua": "Rua Nova",
+    "rua": "Av. Principal",
     "quadra": "B",
     "numero": "456",
     "bairro": "Jardim",
@@ -473,41 +248,114 @@ Content-Type: application/json
 }
 ```
 
-### Excluir Usuário
+**2. Fazer login:**
 
-```http
-DELETE http://localhost:8080/api/user/550e8400-e29b-41d4-a716-446655440000
+```json
+POST /api/auth/login
+{
+  "email": "maria@example.com",
+  "password": "senha123"
+}
 ```
 
-### Atualizar Célula
+**3. Criar célula (use o token do passo 2):**
 
-```http
-PATCH http://localhost:8080/api/cells/660e8400-e29b-41d4-a716-446655440001
-Content-Type: application/json
+```json
+POST /api/cells
+Authorization: Bearer SEU_TOKEN_AQUI
 
 {
-  "name": "Célula Renovada",
-  "leaderId": "770e8400-e29b-41d4-a716-446655440002"
+  "name": "Célula Fé",
+  "leaderId": "GUID_DA_MARIA"
 }
 ```
 
 ---
 
-## 🐳 Docker
+## 📦 Desenvolvimento Local (sem Docker)
+
+1. **Instale o MongoDB** ou use MongoDB Atlas (cloud)
+
+2. **Configure o `appsettings.Development.json`**:
+
+```json
+{
+  "MongoDbSettings": {
+    "ConnectionString": "mongodb://localhost:27017",
+    "DatabaseName": "AmarEServir"
+  }
+}
+```
+
+3. **Execute o projeto**:
 
 ```bash
-# Iniciar containers
-docker-compose up -d
+cd backend/Auth.API
+dotnet restore
+dotnet run
+```
 
-# Ver logs
+API disponível em: https://localhost:7001
+
+---
+
+## 🐳 Comandos Docker Úteis
+
+```bash
+# Ver logs da API
 docker-compose logs -f auth-api
+
+# Ver logs do MongoDB
+docker-compose logs -f mongodb
 
 # Parar containers
 docker-compose down
 
-# Rebuild
+# Rebuild após mudanças no código
 docker-compose up -d --build
+
+# Remover volumes (apaga dados do banco)
+docker-compose down -v
 ```
+
+---
+
+## 📝 Regras de Validação
+
+### Usuário
+
+- **Nome**: 3-50 caracteres
+- **Email**: Formato válido, único
+- **Telefone**: 11-13 caracteres
+- **Senha**: Mínimo 6 caracteres
+- **CEP**: Exatamente 8 dígitos
+- **Estado**: Exatamente 2 caracteres (UF)
+
+### Célula
+
+- **Nome**: 3-100 caracteres, único
+- **Líder**: Deve existir e ter role "Leader"
+- **Restrição**: Um líder só pode liderar uma célula
+
+---
+
+## 🔒 Segurança
+
+- ✅ Senhas armazenadas com BCrypt (hash)
+- ✅ Tokens JWT com expiração
+- ✅ Refresh tokens com revogação automática
+- ✅ HTTPS habilitado em produção
+- ✅ Validação de entrada em todas as rotas
+
+---
+
+## 🤝 Contribuindo
+
+1. Fork o projeto
+2. Crie uma branch: `git checkout -b feature/nova-funcionalidade`
+3. Commit: `git commit -m 'Add: nova funcionalidade'`
+4. Push: `git push origin feature/nova-funcionalidade`
+5. Abra um Pull Request
 
 ---
 
@@ -517,10 +365,9 @@ Este projeto está sob a licença MIT.
 
 ---
 
-## 🤝 Contribuição
+## 📞 Suporte
 
-1. Fork o projeto
-2. Crie sua branch (`git checkout -b feature/nova-feature`)
-3. Commit (`git commit -m 'Add nova feature'`)
-4. Push (`git push origin feature/nova-feature`)
-5. Abra um Pull Request
+- 📧 Email: lucianop.borges1@icloud.com
+- 🐛 Issues: [GitHub Issues](https://github.com/seu-usuario/AmarEServir/issues)
+
+---

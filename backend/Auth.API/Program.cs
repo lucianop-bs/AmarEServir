@@ -1,4 +1,4 @@
-using Auth.API.Api.Configurations;
+using Auth.API.Api.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
