@@ -8,4 +8,7 @@
   <Folder Name="/Solution Items/">
     <File Path=".editorconfig" />
   </Folder>
+  <Folder Name="/Testes/">
+    <Project Path="tests/AmarEServir.UnitTests/AmarEServir.UnitTests.csproj" Id="ce62dfa5-0ef0-471f-8277-4c42346d1528" />
+  </Folder>
 </Solution>
